@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025-07-19 渋谷→横浜 一日プラン</title>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --text-muted: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 2rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.5rem;
+        }
+
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .header p {
+            font-size: var(--font-size-md);
+            opacity: 0.9;
+        }
+
+        /* Timeline container */
+        .timeline {
+            position: relative;
+            max-width: 100%;
+        }
+
+        /* Timeline line */
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 2rem;
+            width: 3px;
+            height: 100%;
+            background: var(--secondary-color);
+            z-index: 1;
+        }
+
+        /* Timeline item */
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-lg);
+            padding-left: 5rem;
+        }
+
+        /* Timeline marker */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background: var(--secondary-color);
+            border-radius: 50%;
+            border: 4px solid var(--card-background);
+            z-index: 2;
+        }
+
+        /* Event markers */
+        .timeline-item.event::before {
+            background: var(--accent-color);
+        }
+
+        /* Timeline card */
+        .timeline-card {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-md);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .timeline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Time display */
+        .time {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* Location/Activity title */
+        .activity {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .activity.event {
+            color: var(--accent-color);
+        }
+
+        /* Description */
+        .description {
+            font-size: var(--font-size-md);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Links */
+        .description a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            word-break: break-all;
+            transition: color 0.2s ease;
+        }
+
+        .description a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        /* Highlight important information */
+        .highlight {
+            background: rgba(231, 76, 60, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        /* Distance/Duration badges */
+        .badge {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            margin-left: var(--spacing-sm);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+
+            .header {
+                padding: var(--spacing-md);
+            }
+
+            .header h1 {
+                font-size: var(--font-size-lg);
+            }
+
+            .timeline::before {
+                left: 1rem;
+            }
+
+            .timeline-item {
+                padding-left: 3rem;
+            }
+
+            .timeline-item::before {
+                left: 0.25rem;
+                width: 1rem;
+                height: 1rem;
+            }
+
+            .activity {
+                font-size: var(--font-size-md);
+            }
+
+            .description {
+                font-size: var(--font-size-sm);
+            }
+
+            .badge {
+                display: block;
+                margin: var(--spacing-sm) 0;
+                width: fit-content;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .timeline::before {
+                background: #000 !important;
+            }
+            
+            .timeline-item::before {
+                background: #000 !important;
+            }
+            
+            .timeline-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid var(--border-color);
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .timeline-card:focus-within {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        a:focus {
+            outline: 2px solid var(--secondary-color);
+            outline-offset: 2px;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-md);
+            z-index: 100;
+            min-width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .control-panel h3 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-md);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+        }
+
+        /* Progress Tracker */
+        .progress-section {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Cost Calculator */
+        .cost-section {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        .cost-total {
+            font-weight: 700;
+            color: var(--primary-color);
+            border-top: 1px solid var(--border-color);
+            padding-top: var(--spacing-sm);
+        }
+
+        /* Time Adjuster */
+        .time-adjuster {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .time-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .time-btn {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            background: var(--card-background);
+            border-radius: 4px;
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .time-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .current-delay {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Completed items */
+        .timeline-item.completed {
+            opacity: 0.7;
+        }
+
+        .timeline-item.completed .timeline-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .timeline-item.current {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Toggle button */
+        .toggle-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-panel:hover {
+            background: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .control-panel.hidden {
+            display: none;
+        }
+
+        /* Interactive Map Modal */
+        .map-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .map-modal.active {
+            display: flex;
+        }
+
+        .map-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .map-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .map-close:hover {
+            color: #e74c3c;
+        }
+
+        .map-content {
+            width: 600px;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        /* Timeline enhancements */
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-lg);
+            padding-left: 5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            transform: translateX(5px);
+        }
+
+        .timeline-item.completed {
+            opacity: 0.7;
+        }
+
+        .timeline-item.completed .timeline-card {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .timeline-item.current {
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-item.current .timeline-card {
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btn.map-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .action-btn.map-btn:hover {
+            background: #2980b9;
+        }
+
+        .action-btn.directions-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .action-btn.directions-btn:hover {
+            background: #219a52;
+        }
+
+        .action-btn.info-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .action-btn.info-btn:hover {
+            background: #d68910;
+        }
+
+        /* Status indicators */
+        .status-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-indicator.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-indicator.current {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .status-indicator.upcoming {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Notification system */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 12px 20px;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #27ae60;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3498db;
+        }
+
+        .notification.warning {
+            border-left: 4px solid #f39c12;
+        }
+
+        /* Dark mode support */
+        .dark-mode {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #1a1a1a;
+            --card-background: #2d2d2d;
+            --text-color: #ffffff;
+            --text-muted: #b0b0b0;
+            --border-color: #444444;
+        }
+
+        .dark-mode body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .dark-mode .timeline-card {
+            background: var(--card-background);
+            color: var(--text-color);
+        }
+
+        .dark-mode .control-panel {
+            background: var(--card-background);
+            color: var(--text-color);
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .map-content {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Control Panel -->
+        <button class="toggle-panel" onclick="togglePanel()" aria-label="コントロールパネルを開く">
+            ⚙️
+        </button>
+        
+        <div class="control-panel hidden" id="controlPanel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">📊 旅行コントロール</h3>
+                <button class="time-btn" onclick="toggleDarkMode()" style="padding: 4px 8px; margin: 0;">
+                    🌙
+                </button>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">0/16 完了</div>
+            </div>
+
+            <h3>💰 費用計算</h3>
+            <div class="cost-section">
+                <div class="cost-item">
+                    <span>HELLO CYCLING：</span>
+                    <span>¥850</span>
+                </div>
+                <div class="cost-item">
+                    <span>電車代：</span>
+                    <span>¥660</span>
+                </div>
+                <div class="cost-item">
+                    <span>食事代（推定）：</span>
+                    <span>¥3,000</span>
+                </div>
+                <div class="cost-item">
+                    <span>その他：</span>
+                    <span>¥1,000</span>
+                </div>
+                <div class="cost-item cost-total">
+                    <span>合計：</span>
+                    <span>¥5,510</span>
+                </div>
+            </div>
+
+            <h3>⏰ 時間調整</h3>
+            <div class="time-adjuster">
+                <div class="time-controls">
+                    <button class="time-btn" onclick="adjustTime(-15)">-15分</button>
+                    <button class="time-btn" onclick="adjustTime(-5)">-5分</button>
+                    <button class="time-btn" onclick="adjustTime(5)">+5分</button>
+                    <button class="time-btn" onclick="adjustTime(15)">+15分</button>
+                </div>
+                <div class="current-delay" id="currentDelay">遅延: 0分</div>
+                <button class="time-btn" onclick="resetTime()" style="width: 100%; margin-top: 8px;">リセット</button>
+            </div>
+        </div>
+
+        <header class="header">
+            <h1>2025年7月19日 渋谷→横浜 一日プラン</h1>
+            <p>HELLO CYCLING と電車を使った横浜グルメ・イベント巡り</p>
+        </header>
+
+        <main class="timeline" role="main">
+            <!-- 出発 -->
+            <article class="timeline-item" data-location="渋谷駅">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="06:55">06:55</time>
+                    <h2 class="activity">渋谷駅〈徳真会 QUARTZ TOWER ポート〉でレンタル</h2>
+                    <div class="description">
+                        HELLO CYCLING 24hポート。7台程度。アプリで前夜に30分取り置きすると確実。<br>
+                        <a href="https://cycle.ryde-go.com/ports/10072" target="_blank" rel="noopener noreferrer">https://cycle.ryde-go.com/ports/10072</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('渋谷駅')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps?q=渋谷駅+QUARTZ+TOWER" target="_blank" class="action-btn directions-btn">
+                            🧭 経路
+                        </a>
+                        <button class="action-btn info-btn" onclick="showStationInfo('渋谷駅')">
+                            ℹ️ 情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 移動1 -->
+            <article class="timeline-item" data-location="横浜市中央卸売市場">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="06:55/08:45">06:55–08:45</time>
+                    <h2 class="activity">渋谷 → 横浜市中央卸売市場本場（水産仲卸棟）<span class="badge">約28km・1時間50分</span></h2>
+                    <div class="description">
+                        国道246→15→1号→新横浜通り。平均14km/h＋信号待ち10分。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('横浜市中央卸売市場')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps/dir/渋谷駅/横浜市中央卸売市場" target="_blank" class="action-btn directions-btn">
+                            🚴 自転車ルート
+                        </a>
+                        <button class="action-btn info-btn" onclick="showTrafficInfo()">
+                            🚦 交通情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- イベント1 -->
+            <article class="timeline-item event" data-location="水産仲卸棟">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="08:45/09:45">08:45–09:45</time>
+                    <h2 class="activity event">水産仲卸棟 一般開放</h2>
+                    <div class="description">
+                        <span class="highlight">8:00–10:00</span>（入場無料）。鮮魚直売・マグロ解体など。フォークリフト通行区画に注意。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('水産仲卸棟')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showEventInfo('水産仲卸棟')">
+                            🎪 イベント詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 移動2 -->
+            <article class="timeline-item" data-location="六角橋商店街">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="09:45/10:05">09:45–10:05</time>
+                    <h2 class="activity">市場 → 六角橋商店街<span class="badge">約2km・自転車</span></h2>
+                    <div class="description">
+                        10分強。商店街駐輪場へ。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('六角橋商店街')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps/dir/横浜市中央卸売市場/六角橋商店街" target="_blank" class="action-btn directions-btn">
+                            🚴 自転車ルート
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 散策 -->
+            <article class="timeline-item" data-location="六角橋商店街">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="10:05/11:00">10:05–11:00</time>
+                    <h2 class="activity">六角橋モーニング散策</h2>
+                    <div class="description">
+                        喫茶「珈琲文明」で休憩可。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('六角橋商店街')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showShoppingInfo('六角橋商店街')">
+                            🛍️ 店舗情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 昼食 -->
+            <article class="timeline-item" data-location="ラーメン末廣家">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="11:00/11:45">11:00–11:45</time>
+                    <h2 class="activity">昼食：ラーメン末廣家</h2>
+                    <div class="description">
+                        <span class="highlight">11:00開店</span>／日・月休。待ち15–25分。<br>
+                        <a href="https://www.hellocycling.jp/station/tokyo/%E6%B8%8B%E8%B0%B7%E5%8C%BA" target="_blank" rel="noopener noreferrer">https://www.hellocycling.jp/station/tokyo/%E6%B8%8B%E8%B0%B7%E5%8C%BA</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('ラーメン末廣家')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showRestaurantInfo('ラーメン末廣家')">
+                            🍜 店舗情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 移動3 -->
+            <article class="timeline-item" data-location="北仲ブリック＆ホワイト">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="11:45/12:05">11:45–12:05</time>
+                    <h2 class="activity">六角橋 → 北仲ブリック＆ホワイト<span class="badge">約3km・自転車</span></h2>
+                    <div class="description">
+                        みなとみらい大通り。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('北仲ブリック＆ホワイト')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps/dir/六角橋/北仲ブリック＆ホワイト" target="_blank" class="action-btn directions-btn">
+                            🚴 自転車ルート
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- イベント2 -->
+            <article class="timeline-item event" data-location="横浜北仲マルシェ">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="12:05/13:30">12:05–13:30</time>
+                    <h2 class="activity event">横浜北仲マルシェ</h2>
+                    <div class="description">
+                        <span class="highlight">10:00–16:00</span>。地元野菜・クラフトワイン約40店。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('横浜北仲マルシェ')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showEventInfo('横浜北仲マルシェ')">
+                            🎪 イベント詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 移動4 -->
+            <article class="timeline-item" data-location="赤レンガ倉庫">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="13:30/14:15">13:30–14:15</time>
+                    <h2 class="activity">北仲 → 赤レンガ倉庫ポート<span class="badge">約1km</span></h2>
+                    <div class="description">
+                        水際プロムナードを南へ。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('赤レンガ倉庫')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps/dir/北仲/赤レンガ倉庫" target="_blank" class="action-btn directions-btn">
+                            🚴 自転車ルート
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- イベント3 -->
+            <article class="timeline-item event" data-location="BAY WALK MARKET">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="14:15/15:00">14:15–15:00</time>
+                    <h2 class="activity event">BAY WALK MARKET 2025</h2>
+                    <div class="description">
+                        HAMMERHEAD <span class="highlight">12:00–</span>／赤レンガ <span class="highlight">15:30–</span>。雑貨・クラフトビール。<br>
+                        <a href="https://cycle.ryde-go.com/ports/12546" target="_blank" rel="noopener noreferrer">https://cycle.ryde-go.com/ports/12546</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('BAY WALK MARKET')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showEventInfo('BAY WALK MARKET')">
+                            🎪 イベント詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 移動5 -->
+            <article class="timeline-item" data-location="新杉田">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="15:00/15:45">15:00–15:45</time>
+                    <h2 class="activity">赤レンガ → 新杉田<span class="badge">約14km・自転車</span></h2>
+                    <div class="description">
+                        国道357号海沿い。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('新杉田')">
+                            📍 地図
+                        </button>
+                        <a href="https://maps.google.com/maps/dir/赤レンガ倉庫/新杉田" target="_blank" class="action-btn directions-btn">
+                            🚴 自転車ルート
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 返却 -->
+            <article class="timeline-item" data-location="新杉田駅第四自転車駐車場">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="15:45">15:45</time>
+                    <h2 class="activity">新杉田駅第四自転車駐車場ポートで返却</h2>
+                    <div class="description">
+                        杉田家本店まで徒歩約2分。24h受付。<br>
+                        <a href="https://cycle.ryde-go.com/ports/12546" target="_blank" rel="noopener noreferrer">https://cycle.ryde-go.com/ports/12546</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('新杉田駅第四自転車駐車場')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showPortInfo('新杉田駅第四自転車駐車場')">
+                            🚲 ポート情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 夕食 -->
+            <article class="timeline-item" data-location="杉田家本店">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="15:50/16:40">15:50–16:40</time>
+                    <h2 class="activity">夕食：ラーメン杉田家 本店</h2>
+                    <div class="description">
+                        <span class="highlight">5:00–22:00</span>／日休。夕方は並び短め。「味薄め」指定も可。<br>
+                        <a href="https://www.navitime.co.jp/poi?spot=01325-9719" target="_blank" rel="noopener noreferrer">https://www.navitime.co.jp/poi?spot=01325-9719</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('杉田家本店')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showRestaurantInfo('杉田家本店')">
+                            🍜 店舗情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 電車移動1 -->
+            <article class="timeline-item" data-location="新杉田駅">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="16:45/17:15">16:45–17:15</time>
+                    <h2 class="activity">電車：新杉田 → 白楽<span class="badge">約30分・IC 370円</span></h2>
+                    <div class="description">
+                        JR新杉田 → JR横浜 → 東急東横線白楽。乗換1回。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('新杉田駅')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showTrainInfo('新杉田-白楽')">
+                            🚆 時刻表
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 休憩 -->
+            <article class="timeline-item" data-location="白楽商店街">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="17:15/18:30">17:15–18:30</time>
+                    <h2 class="activity">白楽商店街で休憩・ヤミ市屋台下見</h2>
+                    <div class="description">
+                        「山田屋」かき氷などでクールダウン。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('白楽商店街')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showShoppingInfo('白楽商店街')">
+                            �️ 店舗情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- イベント4 -->
+            <article class="timeline-item event" data-location="六角橋ヤミ市">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="18:30/20:00">18:30–20:00</time>
+                    <h2 class="activity event">第150回 六角橋ヤミ市</h2>
+                    <div class="description">
+                        <span class="highlight">18:30–21:30</span>。LIVE盆踊り・多国籍屋台。19時台が最混雑。<br>
+                        <a href="https://www.hellocycling.jp/time_price/" target="_blank" rel="noopener noreferrer">https://www.hellocycling.jp/time_price/</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('六角橋ヤミ市')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showEventInfo('六角橋ヤミ市')">
+                            🎪 イベント詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 電車移動2 -->
+            <article class="timeline-item" data-location="白楽駅">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="20:05/20:30">20:05–20:30</time>
+                    <h2 class="activity">電車：白楽 → 渋谷<span class="badge">約25分・IC 290円</span></h2>
+                    <div class="description">
+                        東急東横線特急。乗換なし。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('白楽駅')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showTrainInfo('白楽-渋谷')">
+                            🚆 時刻表
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 到着 -->
+            <article class="timeline-item" data-location="渋谷駅">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">予定</div>
+                    <time class="time" datetime="20:30">20:30</time>
+                    <h2 class="activity">渋谷駅　着・解散</h2>
+                    <div class="description">
+                        駅構内混雑。ストレッチでクールダウン。
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('渋谷駅')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showStationInfo('渋谷駅')">
+                            ℹ️ 駅情報
+                        </button>
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        <!-- Map Modal -->
+        <div class="map-modal" id="mapModal">
+            <div class="map-container">
+                <div class="map-header">
+                    <h3 id="mapTitle">地図</h3>
+                    <button class="map-close" onclick="closeMap()">&times;</button>
+                </div>
+                <div class="map-content" id="mapContent">
+                    <div>
+                        <p>📍 地図機能</p>
+                        <p>この機能では以下が表示されます：</p>
+                        <ul style="text-align: left; margin: 10px 0;">
+                            <li>選択した場所の地図</li>
+                            <li>周辺の施設情報</li>
+                            <li>最適なルート案内</li>
+                            <li>リアルタイム交通情報</li>
+                        </ul>
+                        <p><small>実際の実装では、Google Maps APIやMapbox APIを使用して<br>インタラクティブな地図を表示できます。</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Container -->
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        // グローバル変数
+        let currentDelay = 0;
+        let completedItems = new Set();
+        let currentItem = 0;
+        let weatherData = null;
+        let locationPermission = false;
+
+        // スムーズスクロールの実装
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            
+            // 外部リンクの安全な処理
+            const externalLinks = document.querySelectorAll('a[href^="http"]');
+            externalLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 確認ダイアログを表示（オプション）
+                    // if (!confirm('外部サイトに移動します。よろしいですか？')) {
+                    //     e.preventDefault();
+                    // }
+                });
+            });
+
+            // キーボードナビゲーション対応
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
+                }
+            });
+
+            document.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-navigation');
+            });
+
+            // タイムラインアイテムのクリックイベント
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.addEventListener('click', function() {
+                    toggleItemCompletion(index);
+                });
+            });
+
+            // 自動更新タイマー
+            setInterval(updateCurrentTime, 60000); // 1分ごとに更新
+        });
+
+        // アプリケーション初期化
+        function initializeApp() {
+            loadSavedData();
+            updateProgress();
+            updateCurrentItem();
+            requestLocationPermission();
+            getWeatherData();
+        }
+
+        // コントロールパネルの表示/非表示
+        function togglePanel() {
+            const panel = document.getElementById('controlPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        // 時間調整機能
+        function adjustTime(minutes) {
+            currentDelay += minutes;
+            updateAllTimes();
+            updateCurrentDelayDisplay();
+            saveData();
+        }
+
+        function resetTime() {
+            currentDelay = 0;
+            updateAllTimes();
+            updateCurrentDelayDisplay();
+            saveData();
+        }
+
+        function updateAllTimes() {
+            const timeElements = document.querySelectorAll('.time');
+            timeElements.forEach(element => {
+                const originalTime = element.getAttribute('data-original-time');
+                if (originalTime) {
+                    const adjustedTime = adjustTimeString(originalTime, currentDelay);
+                    element.textContent = adjustedTime;
+                }
+            });
+        }
+
+        function adjustTimeString(timeString, delayMinutes) {
+            const times = timeString.split('–');
+            const adjustedTimes = times.map(time => {
+                const [hours, minutes] = time.split(':').map(Number);
+                const totalMinutes = hours * 60 + minutes + delayMinutes;
+                const newHours = Math.floor(totalMinutes / 60);
+                const newMinutes = totalMinutes % 60;
+                return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
+            });
+            return adjustedTimes.join('–');
+        }
+
+        function updateCurrentDelayDisplay() {
+            const delayElement = document.getElementById('currentDelay');
+            delayElement.textContent = `遅延: ${currentDelay}分`;
+        }
+
+        // 進行状況管理
+        function toggleItemCompletion(index) {
+            if (completedItems.has(index)) {
+                completedItems.delete(index);
+                document.querySelectorAll('.timeline-item')[index].classList.remove('completed');
+            } else {
+                completedItems.add(index);
+                document.querySelectorAll('.timeline-item')[index].classList.add('completed');
+            }
+            updateProgress();
+            saveData();
+        }
+
+        function updateProgress() {
+            const totalItems = document.querySelectorAll('.timeline-item').length;
+            const completedCount = completedItems.size;
+            const progressPercentage = (completedCount / totalItems) * 100;
+            
+            document.getElementById('progressFill').style.width = `${progressPercentage}%`;
+            document.getElementById('progressText').textContent = `${completedCount}/${totalItems} 完了`;
+        }
+
+        // 現在のアイテム更新
+        function updateCurrentItem() {
+            const now = new Date();
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach((item, index) => {
+                item.classList.remove('current');
+                const timeElement = item.querySelector('.time');
+                const timeString = timeElement.textContent;
+                
+                if (isCurrentTimeInRange(now, timeString)) {
+                    item.classList.add('current');
+                    currentItem = index;
+                }
+            });
+        }
+
+        function isCurrentTimeInRange(currentTime, timeString) {
+            const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+            
+            if (timeString.includes('–')) {
+                const [startTime, endTime] = timeString.split('–');
+                const startMinutes = timeStringToMinutes(startTime);
+                const endMinutes = timeStringToMinutes(endTime);
+                return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+            } else {
+                const timeMinutes = timeStringToMinutes(timeString);
+                return Math.abs(currentMinutes - timeMinutes) <= 30; // 30分の範囲
+            }
+        }
+
+        function timeStringToMinutes(timeString) {
+            const [hours, minutes] = timeString.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function updateCurrentTime() {
+            updateCurrentItem();
+        }
+
+        // 位置情報機能
+        function requestLocationPermission() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        locationPermission = true;
+                        addLocationFeatures();
+                    },
+                    function(error) {
+                        console.log('位置情報の取得に失敗しました:', error);
+                    }
+                );
+            }
+        }
+
+        function addLocationFeatures() {
+            // 位置情報関連の機能を追加
+            const controlPanel = document.getElementById('controlPanel');
+            const locationSection = document.createElement('div');
+            locationSection.innerHTML = `
+                <h3>📍 現在地情報</h3>
+                <div id="locationInfo" style="margin-bottom: 1rem;">
+                    <button class="time-btn" onclick="showNearbySpots()" style="width: 100%;">
+                        周辺スポット検索
+                    </button>
+                </div>
+            `;
+            controlPanel.appendChild(locationSection);
+        }
+
+        function showNearbySpots() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    // 簡単な周辺スポット情報を表示
+                    const locationInfo = document.getElementById('locationInfo');
+                    locationInfo.innerHTML = `
+                        <div style="font-size: 0.875rem; color: #6c757d;">
+                            現在地: ${lat.toFixed(4)}, ${lon.toFixed(4)}<br>
+                            <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" style="color: #3498db;">
+                                Googleマップで確認
+                            </a>
+                        </div>
+                        <button class="time-btn" onclick="showNearbySpots()" style="width: 100%; margin-top: 8px;">
+                            再取得
+                        </button>
+                    `;
+                });
+            }
+        }
+
+        // 天気情報機能（簡易版）
+        function getWeatherData() {
+            // 実際のAPIキーが必要な場合は省略し、ダミーデータを使用
+            const weatherSection = document.createElement('div');
+            weatherSection.innerHTML = `
+                <h3>🌤️ 天気情報</h3>
+                <div id="weatherInfo" style="margin-bottom: 1rem; font-size: 0.875rem;">
+                    <div id="weatherStatus">天気データを取得中...</div>
+                    <button class="time-btn" onclick="updateWeather()" style="width: 100%; margin-top: 8px;">
+                        天気更新
+                    </button>
+                </div>
+            `;
+            document.getElementById('controlPanel').appendChild(weatherSection);
+            
+            // ダミーの天気データを設定
+            setTimeout(() => {
+                updateWeatherDisplay();
+            }, 1000);
+        }
+
+        function updateWeather() {
+            document.getElementById('weatherStatus').textContent = '更新中...';
+            setTimeout(() => {
+                updateWeatherDisplay();
+            }, 1000);
+        }
+
+        function updateWeatherDisplay() {
+            const weatherStatuses = [
+                '☀️ 晴れ - 25°C',
+                '⛅ 曇り - 23°C',
+                '🌧️ 雨 - 20°C',
+                '🌤️ 晴れ時々曇り - 27°C'
+            ];
+            const randomWeather = weatherStatuses[Math.floor(Math.random() * weatherStatuses.length)];
+            document.getElementById('weatherStatus').textContent = randomWeather;
+        }
+
+        // メモ機能
+        function addMemoFeature() {
+            const memoSection = document.createElement('div');
+            memoSection.innerHTML = `
+                <h3>📝 メモ</h3>
+                <div style="margin-bottom: 1rem;">
+                    <textarea id="userMemo" placeholder="旅行のメモを記入..."
+                        style="width: 100%; height: 60px; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 0.875rem; resize: vertical;">
+                    </textarea>
+                    <button class="time-btn" onclick="saveMemo()" style="width: 100%; margin-top: 8px;">
+                        メモ保存
+                    </button>
+                </div>
+            `;
+            document.getElementById('controlPanel').appendChild(memoSection);
+            
+            // 保存されたメモを読み込み
+            const savedMemo = localStorage.getItem('itinerary-memo');
+            if (savedMemo) {
+                document.getElementById('userMemo').value = savedMemo;
+            }
+        }
+
+        function saveMemo() {
+            const memo = document.getElementById('userMemo').value;
+            localStorage.setItem('itinerary-memo', memo);
+            alert('メモが保存されました！');
+        }
+
+        // お気に入り機能
+        function addFavoriteFeature() {
+            const favoriteSection = document.createElement('div');
+            favoriteSection.innerHTML = `
+                <h3>⭐ お気に入りスポット</h3>
+                <div id="favoriteSpots" style="margin-bottom: 1rem; font-size: 0.875rem;">
+                    <div id="favoriteList"></div>
+                    <button class="time-btn" onclick="showFavoriteModal()" style="width: 100%; margin-top: 8px;">
+                        お気に入り追加
+                    </button>
+                </div>
+            `;
+            document.getElementById('controlPanel').appendChild(favoriteSection);
+            
+            loadFavorites();
+        }
+
+        function showFavoriteModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%;">
+                    <h3>お気に入りスポット追加</h3>
+                    <input type="text" id="favoriteName" placeholder="スポット名" style="width: 100%; margin: 10px 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="text" id="favoriteLocation" placeholder="場所・住所" style="width: 100%; margin: 10px 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button onclick="addFavorite()" style="flex: 1; padding: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            追加
+                        </button>
+                        <button onclick="closeFavoriteModal()" style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            キャンセル
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            window.currentModal = modal;
+        }
+
+        function closeFavoriteModal() {
+            if (window.currentModal) {
+                document.body.removeChild(window.currentModal);
+                window.currentModal = null;
+            }
+        }
+
+        function addFavorite() {
+            const name = document.getElementById('favoriteName').value;
+            const location = document.getElementById('favoriteLocation').value;
+            
+            if (name && location) {
+                const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
+                favorites.push({ name, location, date: new Date().toISOString() });
+                localStorage.setItem('itinerary-favorites', JSON.stringify(favorites));
+                
+                loadFavorites();
+                closeFavoriteModal();
+            }
+        }
+
+        function loadFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
+            const favoriteList = document.getElementById('favoriteList');
+            
+            if (favorites.length === 0) {
+                favoriteList.innerHTML = '<div style="color: #6c757d; text-align: center;">お気に入りはありません</div>';
+                return;
+            }
+            
+            favoriteList.innerHTML = favorites.map((fav, index) => `
+                <div style="margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                    <strong>${fav.name}</strong><br>
+                    <small style="color: #6c757d;">${fav.location}</small>
+                    <button onclick="removeFavorite(${index})" style="float: right; background: #e74c3c; color: white; border: none; border-radius: 3px; padding: 2px 6px; font-size: 12px; cursor: pointer;">
+                        削除
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function removeFavorite(index) {
+            const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
+            favorites.splice(index, 1);
+            localStorage.setItem('itinerary-favorites', JSON.stringify(favorites));
+            loadFavorites();
+        }
+
+        // データ保存・読み込み
+        function saveData() {
+            const data = {
+                currentDelay,
+                completedItems: Array.from(completedItems),
+                currentItem,
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem('itinerary-data', JSON.stringify(data));
+        }
+
+        function loadSavedData() {
+            const savedData = localStorage.getItem('itinerary-data');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                currentDelay = data.currentDelay || 0;
+                completedItems = new Set(data.completedItems || []);
+                currentItem = data.currentItem || 0;
+                
+                // 完了したアイテムにスタイルを適用
+                completedItems.forEach(index => {
+                    const items = document.querySelectorAll('.timeline-item');
+                    if (items[index]) {
+                        items[index].classList.add('completed');
+                    }
+                });
+                
+                updateCurrentDelayDisplay();
+            }
+            
+            // 元の時間を保存
+            const timeElements = document.querySelectorAll('.time');
+            timeElements.forEach(element => {
+                element.setAttribute('data-original-time', element.textContent);
+            });
+        }
+
+        // 追加機能の初期化
+        setTimeout(() => {
+            addMemoFeature();
+            addFavoriteFeature();
+        }, 1000);
+
+        // 地図機能
+        function showMap(location) {
+            const modal = document.getElementById('mapModal');
+            const title = document.getElementById('mapTitle');
+            const content = document.getElementById('mapContent');
+            
+            title.textContent = `${location} - 地図`;
+            
+            // 実際の実装では、Google Maps APIを使用
+            content.innerHTML = `
+                <div>
+                    <p>📍 ${location}</p>
+                    <p>この機能では以下が表示されます：</p>
+                    <ul style="text-align: left; margin: 10px 0;">
+                        <li>選択した場所の詳細地図</li>
+                        <li>周辺の施設・店舗情報</li>
+                        <li>最適なルート案内</li>
+                        <li>リアルタイム交通情報</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <a href="https://maps.google.com/maps?q=${encodeURIComponent(location)}" 
+                           target="_blank" 
+                           style="display: inline-block; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 4px;">
+                            Google マップで開く
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            showNotification(`${location}の地図を表示中`, 'info');
+        }
+
+        function closeMap() {
+            const modal = document.getElementById('mapModal');
+            modal.classList.remove('active');
+        }
+
+        // 各種情報表示機能
+        function showStationInfo(station) {
+            const info = {
+                '渋谷駅': '渋谷駅は東京の主要ターミナル駅の一つです。バイクシェアのポートは駅前に複数あります。',
+                '新杉田駅': 'JR根岸線と京急本線が乗り入れています。横浜方面へのアクセスが便利です。',
+                '白楽駅': '東急東横線の駅です。六角橋商店街の最寄り駅として知られています。'
+            };
+            
+            showNotification(info[station] || `${station}の情報を取得中...`, 'info');
+        }
+
+        function showRestaurantInfo(restaurant) {
+            const info = {
+                'ラーメン末廣家': '六角橋商店街の人気ラーメン店。営業時間は11:00開店、日・月休み。',
+                '杉田家本店': '家系ラーメンの老舗。営業時間は5:00-22:00、日曜休み。「味薄め」指定も可。'
+            };
+            
+            showNotification(info[restaurant] || `${restaurant}の情報を取得中...`, 'info');
+        }
+
+        function showEventInfo(event) {
+            const info = {
+                '水産仲卸棟': '毎月第3土曜日8:00-10:00開催。新鮮な魚介類の直売とマグロの解体ショーが見どころです。',
+                '横浜北仲マルシェ': '毎月開催の地域マルシェ。地元野菜とクラフトワインが充実。10:00-16:00。',
+                'BAY WALK MARKET': 'みなとみらいで開催される大型マーケット。HAMMERHEADは12:00-、赤レンガは15:30-。',
+                '六角橋ヤミ市': '毎月第3土曜日18:30-21:30開催。多国籍屋台と盆踊りが楽しめる地域密着型イベント。'
+            };
+            
+            showNotification(info[event] || `${event}の情報を取得中...`, 'info');
+        }
+
+        function showShoppingInfo(shopping) {
+            const info = {
+                '六角橋商店街': '昭和レトロな商店街。喫茶「珈琲文明」での休憩がおすすめ。',
+                '白楽商店街': '「山田屋」のかき氷が有名。ヤミ市前のクールダウンに最適。'
+            };
+            
+            showNotification(info[shopping] || `${shopping}の情報を取得中...`, 'info');
+        }
+
+        function showPortInfo(port) {
+            const info = {
+                '新杉田駅第四自転車駐車場': 'HELLO CYCLING対応ポート。24時間返却可能。杉田家本店まで徒歩約2分。'
+            };
+            
+            showNotification(info[port] || `${port}の情報を取得中...`, 'info');
+        }
+
+        function showTrafficInfo() {
+            showNotification('交通情報を確認中... 現在の道路状況は良好です。', 'info');
+        }
+
+        function showTrainInfo(route) {
+            const info = {
+                '新杉田-白楽': 'JR根岸線→横浜駅で東急東横線に乗り換え。約30分、370円。',
+                '白楽-渋谷': '東急東横線特急直通。約25分、290円。夜間も運行しています。'
+            };
+            
+            showNotification(info[route] || `${route}の時刻表を確認中...`, 'info');
+        }
+
+        // 通知システム
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // ダークモード機能
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('dark-mode', isDark);
+            
+            const button = document.querySelector('.control-panel button[onclick="toggleDarkMode()"]');
+            button.textContent = isDark ? '☀️' : '🌙';
+            
+            showNotification(`${isDark ? 'ダーク' : 'ライト'}モードに切り替えました`, 'success');
+        }
+
+        // ダークモード設定を読み込み
+        function loadDarkMode() {
+            const isDark = localStorage.getItem('dark-mode') === 'true';
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                const button = document.querySelector('.control-panel button[onclick="toggleDarkMode()"]');
+                if (button) button.textContent = '☀️';
+            }
+        }
+
+        // 初期化時にダークモード設定を読み込み
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(loadDarkMode, 100);
+        });
+
+        // 共有機能
+        function shareItinerary() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '2025年7月19日 渋谷→横浜 一日プラン',
+                    text: 'HELLO CYCLING と電車を使った横浜グルメ・イベント巡り',
+                    url: window.location.href
+                });
+            } else {
+                const url = window.location.href;
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('URLをクリップボードにコピーしました！', 'success');
+                });
+            }
+        }
+
+        // エクスポート機能
+        function exportItinerary() {
+            const data = {
+                title: '2025年7月19日 渋谷→横浜 一日プラン',
+                progress: {
+                    completed: Array.from(completedItems),
+                    delay: currentDelay
+                },
+                memo: localStorage.getItem('itinerary-memo') || '',
+                favorites: JSON.parse(localStorage.getItem('itinerary-favorites') || '[]'),
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'itinerary-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('データをエクスポートしました！', 'success');
+        }
+
+        // 共有・エクスポート機能をコントロールパネルに追加
+        setTimeout(() => {
+            const controlPanel = document.getElementById('controlPanel');
+            const shareSection = document.createElement('div');
+            shareSection.innerHTML = `
+                <h3>📤 共有・エクスポート</h3>
+                <div style="margin-bottom: 1rem;">
+                    <button class="time-btn" onclick="shareItinerary()" style="width: 100%; margin-bottom: 8px;">
+                        🔗 旅程を共有
+                    </button>
+                    <button class="time-btn" onclick="exportItinerary()" style="width: 100%;">
+                        💾 データ保存
+                    </button>
+                </div>
+            `;
+            controlPanel.appendChild(shareSection);
+        }, 1500);
+
+        // モーダルを閉じるためのイベントリスナー
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('map-modal')) {
+                closeMap();
+            }
+        });
+
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMap();
+                closeFavoriteModal();
+            }
+        });
+    </script>
+</body>
+</html>
