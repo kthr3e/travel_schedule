@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025-07-19 渋谷→横浜 一日プラン</title>
+    <title>Personal Travel Schedule</title>
+    
+    <!-- 検索エンジン除外設定 -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    
+    <!-- PWA Manifest（プライベート設定） -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Travel Schedule">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMzNDk4ZGIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiI+CjxwYXRoIGQ9Ik00OCAyNEMyNCAxMiAyNCAzNiA0OCA0OEw4NCA0OFY4NEw0OCA4NFY1MkwxMiA1MkMxMiA2MCAyNCA2MCA0OCA2MFY4NEgxMlY5NkgxMzJWODRIOTZWNjBIMTMyVjQ4SDk2VjI0SDQ4WiIgZmlsbD0iI2ZmZmZmZiIvPgo8L3N2Zz4KPC9zdmc+">
     <style>
         /* CSS Variables for consistent theming */
         :root {
@@ -255,6 +268,106 @@
         a:focus {
             outline: 2px solid var(--secondary-color);
             outline-offset: 2px;
+        }
+        
+        /* PWA専用スタイル */
+        .pwa-mode {
+            --header-padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .pwa-mode .header {
+            padding-top: calc(var(--spacing-lg) + var(--header-padding-top));
+        }
+        
+        /* ゲーミフィケーション用アニメーション */
+        @keyframes stampModalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes stampBounce {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        
+        @keyframes achievementShine {
+            0% { transform: scale(0.5); opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0.5); }
+            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 30px rgba(255,255,255,0.8); }
+            100% { transform: scale(1); opacity: 1; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        }
+        
+        @keyframes slideUpBanner {
+            from { 
+                transform: translateY(100%); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+            }
+        }
+        
+        /* 写真ギャラリー */
+        .photo-gallery {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+        
+        .photo-thumbnail:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        /* プッシュ通知バナー */
+        .notification-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1002;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: slideUpBanner 0.5s ease-out;
+        }
+        
+        /* オフライン表示 */
+        .offline-indicator {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc3545;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            z-index: 1001;
+        }
+        
+        .online-indicator {
+            background: #28a745;
         }
 
         /* Control Panel */
@@ -677,7 +790,7 @@
             </div>
 
             <h3>💰 費用計算</h3>
-            <div class="cost-section">
+            <div class="cost-section" id="costSection">
                 <div class="cost-item">
                     <span>HELLO CYCLING：</span>
                     <span>¥850</span>
@@ -697,6 +810,11 @@
                 <div class="cost-item cost-total">
                     <span>合計：</span>
                     <span>¥5,510</span>
+                </div>
+                <div style="margin-top: 8px;">
+                    <button class="time-btn" onclick="showExpenseForm()" style="width: 100%; font-size: 11px;">
+                        ➕ 実費記録
+                    </button>
                 </div>
             </div>
 
@@ -1127,6 +1245,16 @@
         let weatherData = null;
         let locationPermission = false;
         
+        // PWA関連変数
+        let deferredPrompt;
+        let isOnline = navigator.onLine;
+        let swRegistration = null;
+        
+        // IndexedDB設定（実費記録用）
+        let db = null;
+        const DB_NAME = 'YokohamaTravelDB';
+        const DB_VERSION = 1;
+        
         // API設定
         const API_CONFIG = {
             weather: {
@@ -1260,8 +1388,23 @@
             updateCurrentItem();
             requestLocationPermission();
             
+            // PWA初期化
+            initializePWA();
+            
+            // IndexedDB初期化
+            initializeDatabase();
+            
+            // ゲーム状態読み込み
+            loadGameState();
+            
+            // 写真ボタン追加
+            addPhotoButtonsToTimeline();
+            
             // 設定状況を表示
             showConfigurationStatus();
+            
+            // ゲーミフィケーション要素をコントロールパネルに追加
+            addGameElementsToPanel();
             
             // データ取得開始
             getWeatherData();
@@ -1272,8 +1415,62 @@
             
             // 初回データ取得完了通知
             setTimeout(() => {
-                showNotification('リアルタイム情報の取得を開始しました', 'success');
+                showNotification('🚀 横浜旅行アプリ準備完了！', 'success');
+                
+                // インストールプロンプトを表示
+                setTimeout(() => {
+                    showInstallPrompt();
+                }, 3000);
+                
+                // 開始スタンプ獲得チェック
+                if (!gameState.stamps.has('shibuya_start')) {
+                    setTimeout(() => {
+                        collectStamp('shibuya_start', '渋谷駅');
+                    }, 5000);
+                }
             }, 2000);
+        }
+        
+        // ゲーム要素をコントロールパネルに追加
+        function addGameElementsToPanel() {
+            const controlPanel = document.getElementById('controlPanel');
+            const gameSection = document.createElement('div');
+            gameSection.style.marginBottom = 'var(--spacing-md)';
+            
+            gameSection.innerHTML = `
+                <h3>🎮 旅行ゲーム</h3>
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 8px;">
+                    <div style="font-size: 16px; font-weight: bold;">Lv.${gameState.level}</div>
+                    <div style="font-size: 20px; margin: 4px 0;">${gameState.points} ポイント</div>
+                    <div style="font-size: 12px; opacity: 0.9;">スタンプ ${gameState.stamps.size}個 / 実績 ${gameState.achievements.length}個</div>
+                </div>
+                <div style="display: flex; gap: 4px;">
+                    <button class="time-btn" onclick="showGameStatus()" style="flex: 1; font-size: 11px;">
+                        🏆 実績確認
+                    </button>
+                    <button class="time-btn" onclick="showPhotoGallery()" style="flex: 1; font-size: 11px;">
+                        📷 ギャラリー
+                    </button>
+                </div>
+            `;
+            
+            // 位置追跡ボタンも追加
+            const locationSection = document.createElement('div');
+            locationSection.style.marginTop = 'var(--spacing-sm)';
+            locationSection.innerHTML = `
+                <button class="time-btn" onclick="startLocationTracking()" style="width: 100%; font-size: 11px; background: var(--accent-color);">
+                    🗺️ ルート追従開始
+                </button>
+            `;
+            gameSection.appendChild(locationSection);
+            
+            // 先頭近くに挿入（設定状況の後）
+            const firstChild = controlPanel.children[1]; // 設定状況が[0]なので[1]の位置
+            if (firstChild) {
+                controlPanel.insertBefore(gameSection, firstChild);
+            } else {
+                controlPanel.appendChild(gameSection);
+            }
         }
         
         // 設定状況の表示
@@ -1288,19 +1485,38 @@
                 statusType = 'success';
             }
             
+            // PWA状態もチェック
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone === true;
+            
+            if (isPWA) {
+                statusMessage += ' (PWAモード)';
+            }
+            
+            // オフライン状態も表示
+            if (!isOnline) {
+                statusMessage += ' [オフライン]';
+                statusType = 'warning';
+            }
+            
             // 設定状況をコントロールパネルに表示
             setTimeout(() => {
                 const controlPanel = document.getElementById('controlPanel');
                 const statusSection = document.createElement('div');
                 statusSection.style.marginBottom = 'var(--spacing-md)';
                 statusSection.innerHTML = `
-                    <h3>🔧 API設定状況</h3>
-                    <div style="font-size: 12px; padding: 8px; background: ${statusType === 'success' ? '#d4edda' : '#cce5ff'}; border-radius: 4px; margin-bottom: 8px;">
+                    <h3>🔧 アプリ設定状況</h3>
+                    <div style="font-size: 12px; padding: 8px; background: ${statusType === 'success' ? '#d4edda' : statusType === 'warning' ? '#fff3cd' : '#cce5ff'}; border-radius: 4px; margin-bottom: 8px;">
                         ${statusMessage}
                     </div>
-                    <button class="time-btn" onclick="showSetupGuide()" style="width: 100%;">
-                        📖 設定ガイド
-                    </button>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="time-btn" onclick="showSetupGuide()" style="flex: 1; font-size: 11px;">
+                            📖 設定ガイド
+                        </button>
+                        <button class="time-btn" onclick="showPWAInfo()" style="flex: 1; font-size: 11px;">
+                            📱 PWA情報
+                        </button>
+                    </div>
                 `;
                 
                 // 先頭に挿入
@@ -1310,6 +1526,2122 @@
                     controlPanel.appendChild(statusSection);
                 }
             }, 1000);
+        }
+        
+        // PWA初期化
+        function initializePWA() {
+            // Service Worker登録
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker登録成功:', registration);
+                        swRegistration = registration;
+                        
+                        // アップデートチェック
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Service Worker登録失敗:', error);
+                    });
+            }
+            
+            // インストールプロンプトの準備
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                console.log('インストールプロンプト準備完了');
+            });
+            
+            // インストール完了検知
+            window.addEventListener('appinstalled', () => {
+                showNotification('アプリがホーム画面に追加されました！', 'success');
+                deferredPrompt = null;
+            });
+            
+            // オンライン/オフライン状態監視
+            window.addEventListener('online', () => {
+                isOnline = true;
+                showNotification('オンラインに復帰しました', 'success');
+                updateOnlineStatus();
+            });
+            
+            window.addEventListener('offline', () => {
+                isOnline = false;
+                showNotification('オフライン状態です', 'warning');
+                updateOnlineStatus();
+            });
+            
+            // PWAの表示モード検知
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+            if (isPWA) {
+                document.body.classList.add('pwa-mode');
+                console.log('PWAモードで実行中');
+            }
+        }
+        
+        // インストールプロンプト表示
+        function showInstallPrompt() {
+            // 既にPWAモードまたはモバイルでない場合はスキップ
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                !window.matchMedia('(max-width: 768px)').matches) {
+                return;
+            }
+            
+            const installBanner = document.createElement('div');
+            installBanner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 16px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                z-index: 1002;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                animation: slideUpBanner 0.5s ease-out;
+            `;
+            
+            installBanner.innerHTML = `
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; margin-bottom: 4px;">📱 アプリとして追加</div>
+                    <div style="font-size: 14px; opacity: 0.9;">ホーム画面に追加してオフラインでも利用</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="installPWA()" style="
+                        background: rgba(255, 255, 255, 0.2);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        font-size: 14px;
+                        cursor: pointer;
+                    ">追加</button>
+                    <button onclick="this.closest('div').remove()" style="
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 4px;
+                    ">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(installBanner);
+            
+            // 15秒後に自動で消去
+            setTimeout(() => {
+                if (installBanner.parentNode) {
+                    installBanner.remove();
+                }
+            }, 15000);
+        }
+        
+        // PWAインストール実行
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWAインストール承認');
+                    } else {
+                        console.log('PWAインストール拒否');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // フォールバック：手動インストールガイド
+                showManualInstallGuide();
+            }
+        }
+        
+        // 手動インストールガイド
+        function showManualInstallGuide() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let instructions = '';
+            if (isIOS) {
+                instructions = `
+                    <ol style="text-align: left; padding-left: 20px;">
+                        <li>画面下部の共有ボタン <span style="font-size: 18px;">⎯</span> をタップ</li>
+                        <li>「ホーム画面に追加」を選択</li>
+                        <li>「追加」をタップして完了</li>
+                    </ol>
+                `;
+            } else if (isAndroid) {
+                instructions = `
+                    <ol style="text-align: left; padding-left: 20px;">
+                        <li>ブラウザのメニュー（⋮）をタップ</li>
+                        <li>「ホーム画面に追加」を選択</li>
+                        <li>「追加」をタップして完了</li>
+                    </ol>
+                `;
+            } else {
+                instructions = `
+                    <div style="text-align: center;">
+                        デスクトップ版Chromeをご利用の場合、<br>
+                        アドレスバーの右側にインストールアイコンが表示されます。
+                    </div>
+                `;
+            }
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 12px; padding: 24px;
+                max-width: 400px; margin: 20px; text-align: center;
+            `;
+            
+            content.innerHTML = `
+                <h3 style="margin: 0 0 16px 0; color: var(--primary-color);">📱 ホーム画面に追加</h3>
+                <p style="margin-bottom: 20px; color: var(--text-muted);">
+                    アプリのようにご利用いただけます
+                </p>
+                ${instructions}
+                <button onclick="this.closest('div').remove()" style="
+                    margin-top: 20px; padding: 10px 24px;
+                    background: var(--secondary-color); color: white;
+                    border: none; border-radius: 6px; cursor: pointer;
+                ">閉じる</button>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // PWA情報表示
+        function showPWAInfo() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+            const hasServiceWorker = 'serviceWorker' in navigator && swRegistration;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 500px; max-height: 80vh; overflow-y: auto; margin: 20px;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">📱 PWA機能状況</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="space-y: 12px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="margin-right: 8px;">${isPWA ? '✅' : '⏺️'}</span>
+                        <span>PWAモード: ${isPWA ? '有効' : '無効'}</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="margin-right: 8px;">${hasServiceWorker ? '✅' : '❌'}</span>
+                        <span>Service Worker: ${hasServiceWorker ? '登録済み' : '未登録'}</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                        <span style="margin-right: 8px;">${isOnline ? '🟢' : '🔴'}</span>
+                        <span>ネットワーク: ${isOnline ? 'オンライン' : 'オフライン'}</span>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin: 16px 0;">
+                        <h4 style="margin: 0 0 8px 0;">PWA機能</h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                            <li>オフライン対応（データキャッシュ）</li>
+                            <li>ホーム画面へのアプリ追加</li>
+                            <li>プッシュ通知対応</li>
+                            <li>バックグラウンド同期</li>
+                            <li>スプラッシュスクリーン表示</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 16px;">
+                        ${!isPWA ? `<button onclick="showManualInstallGuide(); this.closest('.modal').remove();" style="flex: 1; padding: 8px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">インストール</button>` : ''}
+                        <button onclick="updateCacheData()" style="flex: 1; padding: 8px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer;">キャッシュ更新</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // キャッシュ更新
+        function updateCacheData() {
+            if (swRegistration) {
+                swRegistration.update().then(() => {
+                    showNotification('キャッシュを更新しました', 'success');
+                }).catch(() => {
+                    showNotification('キャッシュ更新に失敗しました', 'warning');
+                });
+            }
+            
+            // 手動でのデータ更新
+            clearCache();
+            getWeatherData();
+            checkEventStatus();
+            checkBusinessHours();
+        }
+        
+        // アップデート通知
+        function showUpdateNotification() {
+            const updateBanner = document.createElement('div');
+            updateBanner.style.cssText = `
+                position: fixed; top: 20px; left: 20px; right: 20px;
+                background: var(--secondary-color); color: white;
+                padding: 12px 16px; border-radius: 8px; z-index: 1001;
+                display: flex; align-items: center; justify-content: space-between;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            `;
+            
+            updateBanner.innerHTML = `
+                <span>新しいバージョンが利用可能です</span>
+                <button onclick="reloadApp()" style="
+                    background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+                ">更新</button>
+            `;
+            
+            document.body.appendChild(updateBanner);
+            
+            setTimeout(() => {
+                if (updateBanner.parentNode) {
+                    updateBanner.remove();
+                }
+            }, 10000);
+        }
+        
+        // アプリ再読み込み
+        function reloadApp() {
+            if (swRegistration && swRegistration.waiting) {
+                swRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+            }
+        }
+        
+        // オンライン状態更新
+        function updateOnlineStatus() {
+            const statusElements = document.querySelectorAll('.online-status');
+            statusElements.forEach(element => {
+                element.textContent = isOnline ? 'オンライン' : 'オフライン';
+                element.className = `online-status ${isOnline ? 'online' : 'offline'}`;
+            });
+        }
+        
+        // IndexedDB初期化
+        function initializeDatabase() {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            
+            request.onerror = () => {
+                console.error('IndexedDB開けませんでした');
+            };
+            
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                console.log('IndexedDB初期化完了');
+            };
+            
+            request.onupgradeneeded = (event) => {
+                db = event.target.result;
+                
+                // 実費記録ストア
+                const expenseStore = db.createObjectStore('expenses', { keyPath: 'id', autoIncrement: true });
+                expenseStore.createIndex('date', 'date', { unique: false });
+                expenseStore.createIndex('category', 'category', { unique: false });
+                expenseStore.createIndex('location', 'location', { unique: false });
+                
+                // 写真ログストア  
+                const photoStore = db.createObjectStore('photos', { keyPath: 'id', autoIncrement: true });
+                photoStore.createIndex('timestamp', 'timestamp', { unique: false });
+                photoStore.createIndex('location', 'location', { unique: false });
+                
+                // ゲーミフィケーションストア
+                const achievementStore = db.createObjectStore('achievements', { keyPath: 'id', autoIncrement: true });
+                achievementStore.createIndex('timestamp', 'timestamp', { unique: false });
+                achievementStore.createIndex('type', 'type', { unique: false });
+                
+                console.log('IndexedDB構造作成完了');
+            };
+        }
+        
+        // 実費記録機能
+        function addExpenseRecord(category, amount, location, description, receiptImage = null) {
+            if (!db) {
+                console.error('データベースが初期化されていません');
+                return;
+            }
+            
+            const transaction = db.transaction(['expenses'], 'readwrite');
+            const store = transaction.objectStore('expenses');
+            
+            const expense = {
+                date: new Date().toISOString(),
+                category: category,
+                amount: parseInt(amount),
+                location: location,
+                description: description,
+                receiptImage: receiptImage,
+                timestamp: Date.now()
+            };
+            
+            const request = store.add(expense);
+            
+            request.onsuccess = () => {
+                console.log('実費記録追加:', expense);
+                updateExpenseDisplay();
+                showNotification(`${category}: ¥${amount.toLocaleString()} を記録しました`, 'success');
+            };
+            
+            request.onerror = () => {
+                console.error('実費記録失敗');
+                showNotification('記録の保存に失敗しました', 'error');
+            };
+        }
+        
+        // 実費記録表示の更新
+        function updateExpenseDisplay() {
+            if (!db) return;
+            
+            const transaction = db.transaction(['expenses'], 'readonly');
+            const store = transaction.objectStore('expenses');
+            const request = store.getAll();
+            
+            request.onsuccess = (event) => {
+                const expenses = event.target.result;
+                const today = new Date().toISOString().split('T')[0];
+                const todayExpenses = expenses.filter(expense => 
+                    expense.date.startsWith(today)
+                );
+                
+                // 合計計算
+                const totalActual = todayExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+                const totalBudget = 5510; // 概算予算
+                const difference = totalActual - totalBudget;
+                
+                // コントロールパネルの費用セクションを更新
+                updateCostSection(todayExpenses, totalActual, totalBudget, difference);
+            };
+        }
+        
+        // 費用セクションの更新
+        function updateCostSection(expenses, totalActual, totalBudget, difference) {
+            const costSection = document.querySelector('.cost-section');
+            if (!costSection) return;
+            
+            const expensesByCategory = expenses.reduce((acc, expense) => {
+                if (!acc[expense.category]) acc[expense.category] = 0;
+                acc[expense.category] += expense.amount;
+                return acc;
+            }, {});
+            
+            costSection.innerHTML = `
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: bold;">📊 実費 vs 概算</span>
+                        <button class="time-btn" onclick="showExpenseForm()" style="padding: 2px 6px; font-size: 10px;">
+                            ➕ 追加
+                        </button>
+                    </div>
+                    
+                    <div style="margin-bottom: 8px;">
+                        <div class="cost-item">
+                            <span>概算予算：</span>
+                            <span>¥${totalBudget.toLocaleString()}</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>実際の支出：</span>
+                            <span style="color: ${difference > 0 ? '#e74c3c' : '#27ae60'};">¥${totalActual.toLocaleString()}</span>
+                        </div>
+                        <div class="cost-item" style="border-top: 1px solid var(--border-color); padding-top: 4px;">
+                            <span>差額：</span>
+                            <span style="color: ${difference > 0 ? '#e74c3c' : '#27ae60'}; font-weight: bold;">
+                                ${difference > 0 ? '+' : ''}¥${difference.toLocaleString()}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    ${Object.keys(expensesByCategory).length > 0 ? `
+                        <div style="font-size: 11px; margin-top: 8px;">
+                            <div style="font-weight: bold; margin-bottom: 4px;">📝 今日の記録</div>
+                            ${Object.entries(expensesByCategory).map(([category, amount]) => `
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                                    <span>${category}:</span>
+                                    <span>¥${amount.toLocaleString()}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    <div style="margin-top: 8px;">
+                        <button class="time-btn" onclick="showExpenseChart()" style="width: 100%; font-size: 11px;">
+                            📊 詳細分析
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 実費入力フォーム表示
+        function showExpenseForm() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 400px; margin: 20px; width: 100%;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">💰 実費記録</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <form onsubmit="submitExpense(event)" style="space-y: 12px;">
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">カテゴリ</label>
+                        <select name="category" required style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                            <option value="">選択してください</option>
+                            <option value="交通費">🚃 交通費</option>
+                            <option value="自転車レンタル">🚲 自転車レンタル</option>
+                            <option value="食事">🍽️ 食事</option>
+                            <option value="イベント">🎪 イベント</option>
+                            <option value="ショッピング">🛍️ ショッピング</option>
+                            <option value="その他">🔖 その他</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">金額（円）</label>
+                        <input type="number" name="amount" required min="0" step="1" placeholder="0" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">場所</label>
+                        <input type="text" name="location" placeholder="例: 横浜駅" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">メモ</label>
+                        <input type="text" name="description" placeholder="例: 昼食代" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">レシート画像（オプション）</label>
+                        <input type="file" name="receipt" accept="image/*" capture="environment" style="width: 100%; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" onclick="this.closest('.modal').remove()" style="flex: 1; padding: 10px; background: var(--text-muted); color: white; border: none; border-radius: 4px; cursor: pointer;">キャンセル</button>
+                        <button type="submit" style="flex: 1; padding: 10px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">記録</button>
+                    </div>
+                </form>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 実費記録送信
+        function submitExpense(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const category = formData.get('category');
+            const amount = formData.get('amount');
+            const location = formData.get('location');
+            const description = formData.get('description');
+            const receiptFile = formData.get('receipt');
+            
+            if (receiptFile && receiptFile.size > 0) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    addExpenseRecord(category, amount, location, description, e.target.result);
+                };
+                reader.readAsDataURL(receiptFile);
+            } else {
+                addExpenseRecord(category, amount, location, description);
+            }
+            
+            event.target.closest('.modal').remove();
+        }
+        
+        // 詳細分析表示
+        function showExpenseChart() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 500px; margin: 20px; width: 100%; max-height: 80vh; overflow-y: auto;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">📊 支出分析</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div id="expenseAnalysis">
+                    分析データを読み込み中...
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            // 分析データを取得して表示
+            generateExpenseAnalysis();
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 支出分析データ生成
+        function generateExpenseAnalysis() {
+            if (!db) return;
+            
+            const transaction = db.transaction(['expenses'], 'readonly');
+            const store = transaction.objectStore('expenses');
+            const request = store.getAll();
+            
+            request.onsuccess = (event) => {
+                const expenses = event.target.result;
+                const today = new Date().toISOString().split('T')[0];
+                const todayExpenses = expenses.filter(expense => 
+                    expense.date.startsWith(today)
+                );
+                
+                const analysisContainer = document.getElementById('expenseAnalysis');
+                if (!analysisContainer) return;
+                
+                // 予算との比較データ
+                const budgetData = {
+                    'HELLO CYCLING': { budget: 850, actual: 0 },
+                    '電車代': { budget: 660, actual: 0 },
+                    '食事代': { budget: 3000, actual: 0 },
+                    'その他': { budget: 1000, actual: 0 }
+                };
+                
+                // 実費をカテゴリ別に集計
+                todayExpenses.forEach(expense => {
+                    if (expense.category === '自転車レンタル') {
+                        budgetData['HELLO CYCLING'].actual += expense.amount;
+                    } else if (expense.category === '交通費') {
+                        budgetData['電車代'].actual += expense.amount;
+                    } else if (expense.category === '食事') {
+                        budgetData['食事代'].actual += expense.amount;
+                    } else {
+                        budgetData['その他'].actual += expense.amount;
+                    }
+                });
+                
+                // 簡易チャート生成
+                const chartHTML = Object.entries(budgetData).map(([category, data]) => {
+                    const percentage = data.budget > 0 ? (data.actual / data.budget) * 100 : 0;
+                    const barColor = percentage > 100 ? '#e74c3c' : percentage > 80 ? '#f39c12' : '#27ae60';
+                    
+                    return `
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-weight: bold;">${category}</span>
+                                <span style="color: ${percentage > 100 ? '#e74c3c' : '#27ae60'};">
+                                    ${percentage.toFixed(1)}%
+                                </span>
+                            </div>
+                            <div style="background: #f8f9fa; border-radius: 4px; height: 20px; position: relative; overflow: hidden;">
+                                <div style="
+                                    background: ${barColor}; 
+                                    height: 100%; 
+                                    width: ${Math.min(percentage, 100)}%;
+                                    transition: width 0.5s ease;
+                                "></div>
+                                ${percentage > 100 ? `
+                                    <div style="
+                                        position: absolute; top: 0; right: 0;
+                                        background: #e74c3c; height: 100%;
+                                        width: ${Math.min(percentage - 100, 50)}%;
+                                        opacity: 0.7;
+                                    "></div>
+                                ` : ''}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 2px; color: var(--text-muted);">
+                                <span>予算: ¥${data.budget.toLocaleString()}</span>
+                                <span>実費: ¥${data.actual.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                const totalBudget = Object.values(budgetData).reduce((sum, data) => sum + data.budget, 0);
+                const totalActual = Object.values(budgetData).reduce((sum, data) => sum + data.actual, 0);
+                const totalDifference = totalActual - totalBudget;
+                
+                analysisContainer.innerHTML = `
+                    <div style="background: ${totalDifference > 0 ? '#fee' : '#efe'}; padding: 12px; border-radius: 6px; margin-bottom: 16px; text-align: center;">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">
+                            ${totalDifference > 0 ? '⚠️ 予算オーバー' : '✅ 予算内'}
+                        </div>
+                        <div style="color: ${totalDifference > 0 ? '#e74c3c' : '#27ae60'};">
+                            ${totalDifference > 0 ? '+' : ''}¥${totalDifference.toLocaleString()}
+                        </div>
+                    </div>
+                    
+                    ${chartHTML}
+                    
+                    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                        <h4 style="margin: 0 0 8px 0;">💡 節約アドバイス</h4>
+                        <div style="font-size: 14px; line-height: 1.6;">
+                            ${generateSavingTips(budgetData, totalDifference)}
+                        </div>
+                    </div>
+                `;
+            };
+        }
+        
+        // 節約アドバイス生成
+        function generateSavingTips(budgetData, totalDifference) {
+            const tips = [];
+            
+            if (totalDifference <= 0) {
+                tips.push('👏 計画通りの支出です！この調子でお楽しみください。');
+            } else {
+                // 最もオーバーしているカテゴリを特定
+                const overBudgetCategories = Object.entries(budgetData)
+                    .filter(([_, data]) => data.actual > data.budget)
+                    .sort((a, b) => (b[1].actual - b[1].budget) - (a[1].actual - a[1].budget));
+                
+                if (overBudgetCategories.length > 0) {
+                    const [topCategory, data] = overBudgetCategories[0];
+                    tips.push(`🎯 ${topCategory}が予算を¥${(data.actual - data.budget).toLocaleString()}オーバーしています。`);
+                }
+                
+                if (budgetData['食事代'].actual > budgetData['食事代'].budget) {
+                    tips.push('🍽️ 食事代を抑えるには、市場での買い食いや軽食に変更してみましょう。');
+                }
+                
+                if (budgetData['その他'].actual > budgetData['その他'].budget) {
+                    tips.push('🛍️ お土産代は最後にまとめて購入すると無駄遣いを防げます。');
+                }
+            }
+            
+            if (tips.length === 0) {
+                tips.push('📈 今後の参考のため、記録を続けてください！');
+            }
+            
+            return tips.join('<br>');
+        }
+        
+        // ルート追従型プッシュ通知機能
+        let watchPositionId = null;
+        let notificationPermission = false;
+        let lastNotificationTime = {};
+        const NOTIFICATION_COOLDOWN = 60000; // 1分間のクールダウン
+        
+        // 各地点の座標データ（実際の座標）
+        const LOCATION_COORDINATES = {
+            '渋谷駅': { lat: 35.6580, lng: 139.7016, name: 'HELLO CYCLING レンタル開始' },
+            '横浜市中央卸売市場': { lat: 35.4437, lng: 139.6231, name: '水産仲卸棟 一般開放' },
+            '六角橋商店街': { lat: 35.4814, lng: 139.6153, name: 'モーニング散策・ラーメン末廣家' },
+            '北仲ブリック＆ホワイト': { lat: 35.4530, lng: 139.6317, name: '横浜北仲マルシェ' },
+            '赤レンガ倉庫': { lat: 35.4530, lng: 139.6425, name: 'BAY WALK MARKET・自転車返却' },
+            '新杉田駅': { lat: 35.4067, lng: 139.6731, name: '杉田家本店・電車移動' },
+            '白楽駅': { lat: 35.4925, lng: 139.6231, name: '白楽商店街散策' },
+            '六角橋ヤミ市': { lat: 35.4814, lng: 139.6153, name: '六角橋ヤミ市（夜）' }
+        };
+        
+        // 通知許可の取得
+        async function requestNotificationPermission() {
+            if (!('Notification' in window)) {
+                console.log('このブラウザは通知をサポートしていません');
+                return false;
+            }
+            
+            if (Notification.permission === 'granted') {
+                notificationPermission = true;
+                return true;
+            }
+            
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                notificationPermission = permission === 'granted';
+                return notificationPermission;
+            }
+            
+            return false;
+        }
+        
+        // 位置情報監視の開始
+        async function startLocationTracking() {
+            if (!navigator.geolocation) {
+                showNotification('このデバイスは位置情報をサポートしていません', 'warning');
+                return;
+            }
+            
+            // 通知許可を取得
+            const hasNotificationPermission = await requestNotificationPermission();
+            if (!hasNotificationPermission) {
+                showNotification('通知許可が必要です。ブラウザ設定を確認してください。', 'warning');
+            }
+            
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 30000 // 30秒間キャッシュを使用
+            };
+            
+            watchPositionId = navigator.geolocation.watchPosition(
+                handlePositionUpdate,
+                handlePositionError,
+                options
+            );
+            
+            showNotification('🗺️ ルート追従を開始しました', 'info');
+            console.log('位置情報監視開始');
+        }
+        
+        // 位置情報停止
+        function stopLocationTracking() {
+            if (watchPositionId !== null) {
+                navigator.geolocation.clearWatch(watchPositionId);
+                watchPositionId = null;
+                showNotification('ルート追従を停止しました', 'info');
+                console.log('位置情報監視停止');
+            }
+        }
+        
+        // 位置情報更新処理
+        function handlePositionUpdate(position) {
+            const currentLat = position.coords.latitude;
+            const currentLng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            
+            console.log(`現在位置: ${currentLat.toFixed(6)}, ${currentLng.toFixed(6)} (精度: ${accuracy}m)`);
+            
+            // 各地点との距離をチェック
+            Object.entries(LOCATION_COORDINATES).forEach(([locationKey, locationData]) => {
+                const distance = calculateDistance(currentLat, currentLng, locationData.lat, locationData.lng);
+                
+                // 500m以内にいる場合
+                if (distance <= 500 && Date.now() - lastNotificationTime > NOTIFICATION_COOLDOWN) {
+                    checkAndNotifyProximity(locationKey, locationData, distance);
+                }
+            });
+            
+            // スタンプ獲得チェック（100m以内）
+            checkLocationStamps(currentLat, currentLng);
+            
+            // 現在位置を表示更新（デバッグ用）
+            updateCurrentLocationDisplay(currentLat, currentLng, accuracy);
+        }
+        
+        // 位置情報エラー処理
+        function handlePositionError(error) {
+            let message = '';
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = '位置情報の利用が拒否されました';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = '位置情報を取得できません';
+                    break;
+                case error.TIMEOUT:
+                    message = '位置情報の取得がタイムアウトしました';
+                    break;
+                default:
+                    message = '位置情報の取得中にエラーが発生しました';
+                    break;
+            }
+            
+            console.error('位置情報エラー:', message);
+            showNotification(message, 'warning');
+        }
+        
+        // 重複削除：距離計算関数は既にcalculateDistance関数で定義済み
+        
+        // 近接通知のチェックと送信
+        function checkAndNotifyProximity(locationKey, locationData, distance) {
+            const timelineItem = document.querySelector(`[data-location*="${locationKey}"]`);
+            if (!timelineItem) return;
+            
+            // 既に完了している地点はスキップ
+            if (timelineItem.classList.contains('completed')) return;
+            
+            // 通知メッセージ生成
+            const distanceText = distance < 100 ? '到着しました' : `約${Math.round(distance)}m先です`;
+            const message = `📍 ${locationData.name}\n${distanceText}`;
+            
+            // ブラウザ通知
+            if (notificationPermission) {
+                const notification = new Notification('🗺️ 目的地接近', {
+                    body: message,
+                    icon: '/icon-192x192.png',
+                    badge: '/badge-72x72.png',
+                    tag: `location-${locationKey}`, // 同じ地点の重複通知を防ぐ
+                    vibrate: [200, 100, 200, 100, 200],
+                    actions: [
+                        { action: 'view', title: '詳細表示' },
+                        { action: 'dismiss', title: '閉じる' }
+                    ]
+                });
+                
+                notification.onclick = () => {
+                    window.focus();
+                    timelineItem.scrollIntoView({ behavior: 'smooth' });
+                    notification.close();
+                };
+                
+                // 10秒後に自動で閉じる
+                setTimeout(() => notification.close(), 10000);
+            }
+            
+            // アプリ内通知
+            showNotification(message, 'info');
+            
+            // バイブレーション（対応デバイスのみ）
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
+            }
+            
+            // 効果音（オプション）
+            playNotificationSound();
+            
+            lastNotificationTime = Date.now();
+            
+            console.log(`通知送信: ${locationKey} (距離: ${distance.toFixed(0)}m)`);
+        }
+        
+        // 通知音再生（Web Audio API使用）
+        function playNotificationSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (error) {
+                console.log('通知音の再生に失敗:', error);
+            }
+        }
+        
+        // 現在位置表示の更新
+        function updateCurrentLocationDisplay(lat, lng, accuracy) {
+            let locationDisplay = document.getElementById('currentLocationDisplay');
+            
+            if (!locationDisplay) {
+                // 初回作成時
+                const controlPanel = document.getElementById('controlPanel');
+                locationDisplay = document.createElement('div');
+                locationDisplay.id = 'currentLocationDisplay';
+                locationDisplay.style.cssText = `
+                    margin-bottom: var(--spacing-md);
+                    padding: 8px;
+                    background: #f8f9fa;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    border-left: 4px solid var(--secondary-color);
+                `;
+                
+                const locationSection = document.createElement('div');
+                locationSection.innerHTML = `
+                    <h3>🗺️ 現在位置追跡</h3>
+                    <div style="margin-bottom: 8px;">
+                        <button class="time-btn" onclick="startLocationTracking()" style="margin-right: 4px; font-size: 10px;">
+                            ▶️ 開始
+                        </button>
+                        <button class="time-btn" onclick="stopLocationTracking()" style="margin-right: 4px; font-size: 10px;">
+                            ⏸️ 停止
+                        </button>
+                        <button class="time-btn" onclick="showLocationSettings()" style="font-size: 10px;">
+                            ⚙️ 設定
+                        </button>
+                    </div>
+                `;
+                locationSection.appendChild(locationDisplay);
+                
+                // 費用セクションの後に挿入
+                const costSection = controlPanel.querySelector('.cost-section');
+                if (costSection && costSection.parentNode) {
+                    costSection.parentNode.insertBefore(locationSection, costSection.nextSibling);
+                } else {
+                    controlPanel.appendChild(locationSection);
+                }
+            }
+            
+            const distanceToNext = findNearestLocation(lat, lng);
+            
+            locationDisplay.innerHTML = `
+                <div style="margin-bottom: 4px;">
+                    📍 <strong>現在位置:</strong><br>
+                    ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
+                    <span style="color: var(--text-muted);">精度: ±${accuracy.toFixed(0)}m</span>
+                </div>
+                ${distanceToNext ? `
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #dee2e6;">
+                        🎯 <strong>次の目的地:</strong><br>
+                        ${distanceToNext.name}<br>
+                        <span style="color: var(--secondary-color);">残り約${distanceToNext.distance.toFixed(0)}m</span>
+                    </div>
+                ` : ''}
+            `;
+        }
+        
+        // 最寄りの未完了地点を検索
+        function findNearestLocation(currentLat, currentLng) {
+            let nearest = null;
+            let minDistance = Infinity;
+            
+            Object.entries(LOCATION_COORDINATES).forEach(([locationKey, locationData]) => {
+                const timelineItem = document.querySelector(`[data-location*="${locationKey}"]`);
+                
+                // 未完了の地点のみ対象
+                if (timelineItem && !timelineItem.classList.contains('completed')) {
+                    const distance = calculateDistance(currentLat, currentLng, locationData.lat, locationData.lng);
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearest = {
+                            key: locationKey,
+                            name: locationData.name,
+                            distance: distance
+                        };
+                    }
+                }
+            });
+            
+            return nearest;
+        }
+        
+        // 位置情報設定表示
+        function showLocationSettings() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 400px; margin: 20px; width: 100%;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">🗺️ 位置追跡設定</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0;">📱 通知設定</h4>
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: flex; align-items: center;">
+                            <input type="checkbox" ${notificationPermission ? 'checked' : ''} onchange="toggleNotifications(this.checked)" style="margin-right: 8px;">
+                            プッシュ通知を有効にする
+                        </label>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                        目的地500m手前で通知します
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0;">🎯 通知距離</h4>
+                    <select onchange="updateNotificationDistance(this.value)" style="width: 100%; padding: 6px;">
+                        <option value="100">100m手前</option>
+                        <option value="200">200m手前</option>
+                        <option value="500" selected>500m手前</option>
+                        <option value="1000">1km手前</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0;">🔊 音声通知</h4>
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" checked onchange="toggleSoundNotifications(this.checked)" style="margin-right: 8px;">
+                        効果音を再生する
+                    </label>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0;">📊 現在の状態</h4>
+                    <div style="font-size: 12px;">
+                        位置情報: ${watchPositionId ? '🟢 追跡中' : '🔴 停止中'}<br>
+                        通知許可: ${notificationPermission ? '🟢 許可済み' : '🔴 未許可'}<br>
+                        精度: ${navigator.geolocation ? 'GPS対応' : 'GPS非対応'}
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="testNotification()" style="flex: 1; padding: 8px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        通知テスト
+                    </button>
+                    <button onclick="this.closest('.modal').remove()" style="flex: 1; padding: 8px; background: var(--text-muted); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        閉じる
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 通知許可切り替え
+        async function toggleNotifications(enabled) {
+            if (enabled) {
+                const permission = await requestNotificationPermission();
+                if (!permission) {
+                    showNotification('通知許可が拒否されました', 'warning');
+                }
+            } else {
+                notificationPermission = false;
+                showNotification('通知を無効にしました', 'info');
+            }
+        }
+        
+        // 通知テスト
+        function testNotification() {
+            if (notificationPermission) {
+                const notification = new Notification('🧪 テスト通知', {
+                    body: 'ルート追従通知が正常に動作しています！',
+                    icon: '/icon-192x192.png',
+                    vibrate: [200, 100, 200]
+                });
+                
+                setTimeout(() => notification.close(), 3000);
+                playNotificationSound();
+            } else {
+                showNotification('通知許可が必要です', 'warning');
+            }
+        }
+        
+        // 重複削除：写真関連の機能はtakePhoto、showPhotoGallery関数で統合済み
+        
+        // 写真撮影
+        function takePhoto(itemIndex, location) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'environment'; // 背面カメラを優先
+            input.multiple = true; // 複数選択可能
+            
+            input.onchange = (event) => {
+                const files = Array.from(event.target.files);
+                if (files.length === 0) return;
+                
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        processPhoto(file, itemIndex, location);
+                    }
+                });
+            };
+            
+            input.click();
+        }
+        
+        // 写真処理
+        function processPhoto(file, itemIndex, location) {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // 画像リサイズ（性能とストレージ節約のため）
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // 最大サイズ設定
+                    const maxWidth = 800;
+                    const maxHeight = 600;
+                    let { width, height } = img;
+                    
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width = (width * maxHeight) / height;
+                            height = maxHeight;
+                        }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    
+                    // 画像描画
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // JPEG品質調整（70%）
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // 写真データを保存
+                    savePhoto(compressedDataUrl, itemIndex, location, file.name);
+                };
+                
+                img.src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // 写真保存
+        function savePhoto(dataUrl, itemIndex, location, filename) {
+            if (!db) {
+                console.error('データベースが初期化されていません');
+                return;
+            }
+            
+            const transaction = db.transaction(['photos'], 'readwrite');
+            const store = transaction.objectStore('photos');
+            
+            const photo = {
+                dataUrl: dataUrl,
+                itemIndex: itemIndex,
+                location: location || '不明',
+                filename: filename,
+                timestamp: Date.now(),
+                date: new Date().toISOString(),
+                size: dataUrl.length,
+                caption: ''
+            };
+            
+            const request = store.add(photo);
+            
+            request.onsuccess = (event) => {
+                const photoId = event.target.result;
+                console.log('写真保存完了:', photoId);
+                
+                photoCount++;
+                addPhotoThumbnail(photoId, photo, itemIndex);
+                showNotification(`📷 写真を保存しました (${photoCount}枚目)`, 'success');
+                
+                // バイブレーション
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([100]);
+                }
+            };
+            
+            request.onerror = () => {
+                console.error('写真保存失敗');
+                showNotification('写真の保存に失敗しました', 'error');
+            };
+        }
+        
+        // 写真サムネイル追加
+        function addPhotoThumbnail(photoId, photo, itemIndex) {
+            const timelineItem = document.querySelectorAll('.timeline-item')[itemIndex];
+            if (!timelineItem) return;
+            
+            let photoGallery = timelineItem.querySelector('.photo-gallery');
+            if (!photoGallery) {
+                photoGallery = document.createElement('div');
+                photoGallery.className = 'photo-gallery';
+                photoGallery.style.cssText = `
+                    margin-top: 12px;
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 6px;
+                `;
+                
+                const timelineCard = timelineItem.querySelector('.timeline-card');
+                timelineCard.appendChild(photoGallery);
+            }
+            
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'photo-thumbnail';
+            thumbnail.style.cssText = `
+                width: 60px;
+                height: 60px;
+                background-image: url("${photo.dataUrl}");
+                background-size: cover;
+                background-position: center;
+                border-radius: 6px;
+                cursor: pointer;
+                border: 2px solid #fff;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                transition: transform 0.2s ease;
+                position: relative;
+            `;
+            
+            thumbnail.innerHTML = `
+                <div style="
+                    position: absolute;
+                    top: 2px;
+                    right: 2px;
+                    background: rgba(0,0,0,0.7);
+                    color: white;
+                    border-radius: 50%;
+                    width: 16px;
+                    height: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 10px;
+                    cursor: pointer;
+                " onclick="event.stopPropagation(); deletePhoto(${photoId}, this.closest('.photo-thumbnail'))">×</div>
+            `;
+            
+            thumbnail.addEventListener('mouseover', () => {
+                thumbnail.style.transform = 'scale(1.1)';
+            });
+            
+            thumbnail.addEventListener('mouseout', () => {
+                thumbnail.style.transform = 'scale(1)';
+            });
+            
+            thumbnail.onclick = () => showPhotoModal(photoId, photo);
+            
+            photoGallery.appendChild(thumbnail);
+        }
+        
+        // 写真詳細表示
+        function showPhotoModal(photoId, photo) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.9); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 90%; max-height: 90%; overflow: auto;
+                position: relative;
+            `;
+            
+            const imageDate = new Date(photo.timestamp);
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">📷 ${photo.location}</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <img src="${photo.dataUrl}" style="max-width: 100%; max-height: 400px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">
+                        📅 ${imageDate.toLocaleString('ja-JP')}<br>
+                        📁 ${photo.filename}<br>
+                        💾 ${(photo.size / 1024).toFixed(1)} KB
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <label style="display: block; margin-bottom: 4px; font-weight: bold;">📝 キャプション</label>
+                        <input type="text" id="photoCaption-${photoId}" value="${photo.caption}" placeholder="写真の説明を入力" style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="updatePhotoCaption(${photoId})" style="flex: 1; padding: 8px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        💾 キャプション保存
+                    </button>
+                    <button onclick="downloadPhoto(${photoId})" style="flex: 1; padding: 8px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        📥 ダウンロード
+                    </button>
+                    <button onclick="deletePhoto(${photoId}); this.closest('.modal').remove();" style="flex: 1; padding: 8px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        🗑️ 削除
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 写真キャプション更新
+        function updatePhotoCaption(photoId) {
+            const captionInput = document.getElementById(`photoCaption-${photoId}`);
+            if (!captionInput || !db) return;
+            
+            const transaction = db.transaction(['photos'], 'readwrite');
+            const store = transaction.objectStore('photos');
+            const request = store.get(photoId);
+            
+            request.onsuccess = (event) => {
+                const photo = event.target.result;
+                if (photo) {
+                    photo.caption = captionInput.value;
+                    const updateRequest = store.put(photo);
+                    
+                    updateRequest.onsuccess = () => {
+                        showNotification('キャプションを保存しました', 'success');
+                    };
+                }
+            };
+        }
+        
+        // 写真ダウンロード
+        function downloadPhoto(photoId) {
+            if (!db) return;
+            
+            const transaction = db.transaction(['photos'], 'readonly');
+            const store = transaction.objectStore('photos');
+            const request = store.get(photoId);
+            
+            request.onsuccess = (event) => {
+                const photo = event.target.result;
+                if (photo) {
+                    const link = document.createElement('a');
+                    link.href = photo.dataUrl;
+                    link.download = `横浜旅行_${photo.location}_${new Date(photo.timestamp).toISOString().slice(0, 19).replace(/[:.]/g, '-')}.jpg`;
+                    link.click();
+                }
+            };
+        }
+        
+        // 写真削除
+        function deletePhoto(photoId, thumbnailElement = null) {
+            if (!confirm('この写真を削除しますか？')) return;
+            
+            if (!db) return;
+            
+            const transaction = db.transaction(['photos'], 'readwrite');
+            const store = transaction.objectStore('photos');
+            const request = store.delete(photoId);
+            
+            request.onsuccess = () => {
+                if (thumbnailElement) {
+                    thumbnailElement.remove();
+                    photoCount = Math.max(0, photoCount - 1);
+                }
+                showNotification('写真を削除しました', 'info');
+            };
+        }
+        
+        // ギャラリー表示
+        function showPhotoGallery() {
+            if (!db) {
+                showNotification('データベースが初期化されていません', 'warning');
+                return;
+            }
+            
+            const transaction = db.transaction(['photos'], 'readonly');
+            const store = transaction.objectStore('photos');
+            const request = store.getAll();
+            
+            request.onsuccess = (event) => {
+                const photos = event.target.result;
+                displayGalleryModal(photos);
+            };
+        }
+        
+        // ギャラリーモーダル表示
+        function displayGalleryModal(photos) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 90%; max-height: 90%; overflow: auto; width: 600px;
+            `;
+            
+            const photosHTML = photos.length > 0 ? photos.map((photo, index) => `
+                <div style="
+                    display: inline-block;
+                    margin: 8px;
+                    text-align: center;
+                    cursor: pointer;
+                " onclick="showPhotoModal(${photo.id}, ${JSON.stringify(photo).replace(/"/g, '&quot;')})">
+                    <img src="${photo.dataUrl}" style="
+                        width: 120px;
+                        height: 120px;
+                        object-fit: cover;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                        transition: transform 0.2s ease;
+                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div style="margin-top: 4px; font-size: 12px; color: var(--text-muted);">
+                        ${photo.location}<br>
+                        ${new Date(photo.timestamp).toLocaleDateString('ja-JP')}
+                    </div>
+                </div>
+            `).join('') : '<div style="text-align: center; color: var(--text-muted); padding: 40px;">まだ写真がありません</div>';
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">📷 旅行ギャラリー (${photos.length}枚)</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    ${photosHTML}
+                </div>
+                
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                    <button onclick="exportPhotoGallery()" style="padding: 10px 20px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        📦 一括ダウンロード
+                    </button>
+                    <button onclick="shareGallery()" style="padding: 10px 20px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        📤 シェア
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 写真一括エクスポート（JSZip使用）
+        async function exportPhotoGallery() {
+            if (!db) return;
+            
+            showNotification('ギャラリーを準備中...', 'info');
+            
+            try {
+                // JSZipライブラリを動的に読み込み
+                if (typeof JSZip === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                    document.head.appendChild(script);
+                    
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                    });
+                }
+                
+                const transaction = db.transaction(['photos'], 'readonly');
+                const store = transaction.objectStore('photos');
+                const request = store.getAll();
+                
+                request.onsuccess = async (event) => {
+                    const photos = event.target.result;
+                    if (photos.length === 0) {
+                        showNotification('エクスポートする写真がありません', 'warning');
+                        return;
+                    }
+                    
+                    const zip = new JSZip();
+                    const travelFolder = zip.folder("yokohama-travel-photos");
+                    
+                    // README追加
+                    travelFolder.file("README.txt", `横浜旅行写真集
+撮影日: ${new Date().toLocaleDateString('ja-JP')}
+写真数: ${photos.length}枚
+
+各写真は撮影場所別に命名されています。
+`);
+                    
+                    // 写真を追加
+                    photos.forEach((photo, index) => {
+                        const base64Data = photo.dataUrl.split(',')[1];
+                        const filename = `${(index + 1).toString().padStart(3, '0')}_${photo.location}_${new Date(photo.timestamp).toISOString().slice(0, 10)}.jpg`;
+                        travelFolder.file(filename, base64Data, { base64: true });
+                    });
+                    
+                    // HTML概要ファイル作成
+                    const htmlContent = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>横浜旅行写真集</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .photo { margin: 20px 0; text-align: center; }
+        .photo img { max-width: 300px; border-radius: 8px; }
+        .caption { margin-top: 8px; font-weight: bold; }
+        .date { color: #666; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>🌊 横浜旅行写真集</h1>
+    <p>撮影日: ${new Date().toLocaleDateString('ja-JP')}</p>
+    ${photos.map((photo, index) => `
+        <div class="photo">
+            <img src="data:image/jpeg;base64,${photo.dataUrl.split(',')[1]}" alt="${photo.location}">
+            <div class="caption">${photo.location}</div>
+            <div class="date">${new Date(photo.timestamp).toLocaleString('ja-JP')}</div>
+            ${photo.caption ? `<div style="margin-top: 4px; font-style: italic;">${photo.caption}</div>` : ''}
+        </div>
+    `).join('')}
+</body>
+</html>
+                    `;
+                    
+                    travelFolder.file("index.html", htmlContent);
+                    
+                    // ZIP生成とダウンロード
+                    const zipBlob = await zip.generateAsync({ type: "blob" });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(zipBlob);
+                    link.download = `横浜旅行写真集_${new Date().toISOString().slice(0, 10)}.zip`;
+                    link.click();
+                    
+                    showNotification(`${photos.length}枚の写真をダウンロードしました`, 'success');
+                };
+                
+            } catch (error) {
+                console.error('エクスポートエラー:', error);
+                showNotification('エクスポートに失敗しました', 'error');
+            }
+        }
+        
+        // ギャラリーシェア
+        function shareGallery() {
+            if (navigator.share) {
+                // Web Share API対応ブラウザ
+                navigator.share({
+                    title: '横浜旅行写真集',
+                    text: `横浜旅行の写真を${photoCount}枚撮影しました！`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // フォールバック：URL文字列
+                const shareText = `横浜旅行の写真を${photoCount}枚撮影しました！ ${window.location.href}`;
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showNotification('シェア用テキストをコピーしました', 'success');
+                }).catch(() => {
+                    // フォールバック：テキストエリア表示
+                    prompt('シェア用テキスト:', shareText);
+                });
+            }
+        }
+        
+        // ゲーミフィケーション機能
+        let gameState = {
+            stamps: new Set(),
+            achievements: [],
+            points: 0,
+            level: 1,
+            stepCount: 0,
+            startTime: null
+        };
+        
+        // スタンプ定義
+        const STAMPS = {
+            'shibuya_start': { name: 'スタート', emoji: '🚀', location: '渋谷駅', points: 10 },
+            'market_visit': { name: 'マーケット探検家', emoji: '🐟', location: '横浜市中央卸売市場', points: 20 },
+            'ramen_master': { name: 'ラーメン通', emoji: '🍜', location: 'ラーメン末廣家', points: 15 },
+            'marche_explorer': { name: 'マルシェ愛好家', emoji: '🥖', location: '横浜北仲マルシェ', points: 15 },
+            'redbrick_collector': { name: 'レンガ倉庫マスター', emoji: '🧱', location: '赤レンガ倉庫', points: 15 },
+            'cycling_champion': { name: 'サイクリスト', emoji: '🚲', location: 'HELLO CYCLING', points: 25 },
+            'sugita_gourmet': { name: '杉田グルメ', emoji: '🍲', location: '杉田家本店', points: 20 },
+            'night_market': { name: '夜市の達人', emoji: '🌙', location: '六角橋ヤミ市', points: 30 },
+            'photographer': { name: 'フォトグラファー', emoji: '📸', condition: 'photos >= 5', points: 25 },
+            'budget_keeper': { name: '家計管理上手', emoji: '💰', condition: 'under_budget', points: 50 },
+            'early_bird': { name: '早起き鳥', emoji: '🐦', condition: 'start_before_7', points: 15 },
+            'completionist': { name: 'コンプリートマスター', emoji: '👑', condition: 'all_stamps', points: 100 }
+        };
+        
+        // 実績チェック
+        function checkAchievements() {
+            const newAchievements = [];
+            
+            // 写真実績
+            if (photoCount >= 5 && !gameState.achievements.includes('photographer')) {
+                newAchievements.push('photographer');
+            }
+            
+            // 予算実績（実費記録があるとき）
+            if (db) {
+                checkBudgetAchievement().then(underBudget => {
+                    if (underBudget && !gameState.achievements.includes('budget_keeper')) {
+                        unlockAchievement('budget_keeper');
+                    }
+                });
+            }
+            
+            // 早起き実績
+            if (gameState.startTime) {
+                const startHour = new Date(gameState.startTime).getHours();
+                if (startHour < 7 && !gameState.achievements.includes('early_bird')) {
+                    newAchievements.push('early_bird');
+                }
+            }
+            
+            // コンプリート実績
+            const locationStamps = Object.keys(STAMPS).filter(key => STAMPS[key].location && STAMPS[key].location !== 'HELLO CYCLING');
+            const hasAllLocationStamps = locationStamps.every(stamp => gameState.stamps.has(stamp));
+            if (hasAllLocationStamps && !gameState.achievements.includes('completionist')) {
+                newAchievements.push('completionist');
+            }
+            
+            // 新しい実績をアンロック
+            newAchievements.forEach(achievement => {
+                unlockAchievement(achievement);
+            });
+        }
+        
+        // 予算実績チェック
+        function checkBudgetAchievement() {
+            return new Promise((resolve) => {
+                if (!db) {
+                    resolve(false);
+                    return;
+                }
+                
+                const transaction = db.transaction(['expenses'], 'readonly');
+                const store = transaction.objectStore('expenses');
+                const request = store.getAll();
+                
+                request.onsuccess = (event) => {
+                    const expenses = event.target.result;
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayExpenses = expenses.filter(expense => 
+                        expense.date.startsWith(today)
+                    );
+                    
+                    const totalActual = todayExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+                    const totalBudget = 5510;
+                    
+                    resolve(totalActual <= totalBudget);
+                };
+                
+                request.onerror = () => resolve(false);
+            });
+        }
+        
+        // スタンプ獲得
+        function collectStamp(stampId, location) {
+            if (gameState.stamps.has(stampId)) {
+                return false; // 既に獲得済み
+            }
+            
+            const stamp = STAMPS[stampId];
+            if (!stamp) return false;
+            
+            gameState.stamps.add(stampId);
+            gameState.points += stamp.points;
+            
+            // レベルアップ計算
+            const newLevel = Math.floor(gameState.points / 100) + 1;
+            const leveledUp = newLevel > gameState.level;
+            gameState.level = newLevel;
+            
+            // 保存
+            saveGameState();
+            
+            // 通知表示
+            showStampNotification(stamp, leveledUp);
+            
+            // バッジング API対応ブラウザでバッジ更新
+            updateAppBadge();
+            
+            // 実績チェック
+            checkAchievements();
+            
+            return true;
+        }
+        
+        // スタンプ通知
+        function showStampNotification(stamp, leveledUp) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1001;
+                display: flex; align-items: center; justify-content: center;
+                animation: stampModalFadeIn 0.5s ease-out;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white; border-radius: 16px; padding: 30px;
+                text-align: center; max-width: 300px;
+                animation: stampBounce 0.6s ease-out;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+            
+            content.innerHTML = `
+                <div style="font-size: 60px; margin-bottom: 16px;">${stamp.emoji}</div>
+                <h3 style="margin: 0 0 8px 0; font-size: 20px;">スタンプ獲得！</h3>
+                <div style="font-size: 16px; margin-bottom: 12px;">${stamp.name}</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">+${stamp.points} ポイント</div>
+                ${leveledUp ? `
+                    <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+                        🎉 レベルアップ！ Lv.${gameState.level}
+                    </div>
+                ` : ''}
+                <button onclick="this.closest('.modal').remove()" style="
+                    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+                    color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+                    font-size: 14px;
+                ">続ける</button>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            // バイブレーション
+            if ('vibrate' in navigator) {
+                navigator.vibrate([100, 50, 100, 50, 200]);
+            }
+            
+            // 効果音
+            playAchievementSound();
+            
+            // 3秒後に自動で閉じる
+            setTimeout(() => {
+                if (modal.parentNode) {
+                    modal.remove();
+                }
+            }, 3000);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 実績アンロック
+        function unlockAchievement(achievementId) {
+            if (gameState.achievements.includes(achievementId)) return;
+            
+            const achievement = STAMPS[achievementId];
+            if (!achievement) return;
+            
+            gameState.achievements.push(achievementId);
+            gameState.points += achievement.points;
+            
+            // レベルアップ計算
+            const newLevel = Math.floor(gameState.points / 100) + 1;
+            const leveledUp = newLevel > gameState.level;
+            gameState.level = newLevel;
+            
+            saveGameState();
+            showAchievementNotification(achievement, leveledUp);
+            updateAppBadge();
+        }
+        
+        // 実績通知
+        function showAchievementNotification(achievement, leveledUp) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1001;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                color: white; border-radius: 16px; padding: 30px;
+                text-align: center; max-width: 300px;
+                animation: achievementShine 1s ease-out;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+            
+            content.innerHTML = `
+                <div style="font-size: 60px; margin-bottom: 16px;">🏆</div>
+                <h3 style="margin: 0 0 8px 0; font-size: 20px;">実績アンロック！</h3>
+                <div style="font-size: 18px; margin-bottom: 8px;">${achievement.emoji} ${achievement.name}</div>
+                <div style="font-size: 14px; opacity: 0.9; margin-bottom: 16px;">+${achievement.points} ポイント</div>
+                ${leveledUp ? `
+                    <div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 8px; margin-bottom: 16px;">
+                        🎉 レベルアップ！ Lv.${gameState.level}
+                    </div>
+                ` : ''}
+                <button onclick="this.closest('.modal').remove()" style="
+                    background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
+                    color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;
+                ">素晴らしい！</button>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            // バイブレーション
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200, 100, 200, 100, 400]);
+            }
+            
+            // 効果音
+            playAchievementSound();
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // ゲーム状態保存
+        function saveGameState() {
+            localStorage.setItem('yokohama-travel-game', JSON.stringify({
+                stamps: Array.from(gameState.stamps),
+                achievements: gameState.achievements,
+                points: gameState.points,
+                level: gameState.level,
+                stepCount: gameState.stepCount,
+                startTime: gameState.startTime
+            }));
+        }
+        
+        // ゲーム状態読み込み
+        function loadGameState() {
+            const saved = localStorage.getItem('yokohama-travel-game');
+            if (saved) {
+                const data = JSON.parse(saved);
+                gameState.stamps = new Set(data.stamps || []);
+                gameState.achievements = data.achievements || [];
+                gameState.points = data.points || 0;
+                gameState.level = data.level || 1;
+                gameState.stepCount = data.stepCount || 0;
+                gameState.startTime = data.startTime || Date.now();
+            } else {
+                gameState.startTime = Date.now();
+                saveGameState();
+            }
+        }
+        
+        // アプリバッジ更新
+        function updateAppBadge() {
+            if ('setAppBadge' in navigator) {
+                const unreadCount = gameState.stamps.size + gameState.achievements.length;
+                navigator.setAppBadge(unreadCount > 0 ? unreadCount : null);
+            }
+        }
+        
+        // 実績音効果
+        function playAchievementSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // ファンファーレ風の音
+                const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                frequencies.forEach((freq, index) => {
+                    setTimeout(() => {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        
+                        oscillator.start(audioContext.currentTime);
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                    }, index * 100);
+                });
+            } catch (error) {
+                console.log('効果音の再生に失敗:', error);
+            }
+        }
+        
+        // ゲーミフィケーション状況表示
+        function showGameStatus() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const progress = (gameState.points % 100) / 100 * 100;
+            
+            const stampsHTML = Object.entries(STAMPS).map(([key, stamp]) => {
+                const collected = gameState.stamps.has(key);
+                const isAchievement = stamp.condition;
+                const unlocked = isAchievement ? gameState.achievements.includes(key) : collected;
+                
+                return `
+                    <div style="
+                        display: inline-block; margin: 8px; padding: 12px;
+                        background: ${unlocked ? '#d4edda' : '#f8f9fa'};
+                        border-radius: 8px; text-align: center; width: 80px;
+                        border: 2px solid ${unlocked ? '#28a745' : '#dee2e6'};
+                    ">
+                        <div style="font-size: 24px; margin-bottom: 4px; ${unlocked ? '' : 'filter: grayscale(100%); opacity: 0.5;'}">${stamp.emoji}</div>
+                        <div style="font-size: 10px; font-weight: bold;">${stamp.name}</div>
+                        <div style="font-size: 9px; color: var(--text-muted);">+${stamp.points}pt</div>
+                        ${isAchievement ? '<div style="font-size: 8px; color: #6f42c1;">🏆 実績</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 12px; padding: 24px;
+                max-width: 500px; margin: 20px; width: 100%; max-height: 80vh; overflow-y: auto;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">🎮 旅行ゲーム</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">レベル ${gameState.level}</div>
+                    <div style="font-size: 32px; font-weight: bold; margin-bottom: 8px;">${gameState.points} ポイント</div>
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 10px; height: 8px; overflow: hidden;">
+                        <div style="background: white; height: 100%; width: ${progress}%; transition: width 0.5s ease;"></div>
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">次のレベルまで ${100 - (gameState.points % 100)} ポイント</div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 12px 0;">📍 スタンプコレクション (${gameState.stamps.size}/${Object.keys(STAMPS).filter(k => !STAMPS[k].condition).length})</h4>
+                    <div style="background: #f8f9fa; padding: 12px; border-radius: 8px;">
+                        ${stampsHTML}
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 12px 0;">🏆 実績 (${gameState.achievements.length}/${Object.keys(STAMPS).filter(k => STAMPS[k].condition).length})</h4>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                        特別な条件をクリアして実績をアンロックしよう！
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="resetGameProgress()" style="flex: 1; padding: 10px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        🔄 リセット
+                    </button>
+                    <button onclick="this.closest('.modal').remove()" style="flex: 1; padding: 10px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        閉じる
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // ゲーム進行リセット
+        function resetGameProgress() {
+            if (!confirm('ゲームの進行をリセットしますか？（スタンプ・実績・ポイントがすべて削除されます）')) return;
+            
+            gameState = {
+                stamps: new Set(),
+                achievements: [],
+                points: 0,
+                level: 1,
+                stepCount: 0,
+                startTime: Date.now()
+            };
+            
+            saveGameState();
+            updateAppBadge();
+            showNotification('ゲーム進行をリセットしました', 'info');
+            
+            // モーダルを閉じる
+            document.querySelector('.modal')?.remove();
+        }
+        
+        // 位置ベースのスタンプ獲得チェック
+        function checkLocationStamps(currentLat, currentLng) {
+            Object.entries(LOCATION_COORDINATES).forEach(([locationKey, locationData]) => {
+                const distance = calculateDistance(currentLat, currentLng, locationData.lat, locationData.lng);
+                
+                // 100m以内でスタンプ獲得
+                if (distance <= 100) {
+                    const stampId = getStampIdForLocation(locationKey);
+                    if (stampId) {
+                        collectStamp(stampId, locationKey);
+                    }
+                }
+            });
+        }
+        
+        // 場所からスタンプIDを取得
+        function getStampIdForLocation(locationKey) {
+            const mapping = {
+                '渋谷駅': 'shibuya_start',
+                '横浜市中央卸売市場': 'market_visit',
+                'ラーメン末廣家': 'ramen_master',
+                '横浜北仲マルシェ': 'marche_explorer',
+                '赤レンガ倉庫': 'redbrick_collector',
+                '杉田家本店': 'sugita_gourmet',
+                '六角橋ヤミ市': 'night_market'
+            };
+            
+            return mapping[locationKey] || null;
         }
         
         // 設定ガイドの表示
@@ -2427,127 +4759,9 @@
             }
         }
 
-        // メモ機能
-        function addMemoFeature() {
-            const memoSection = document.createElement('div');
-            memoSection.innerHTML = `
-                <h3>📝 メモ</h3>
-                <div style="margin-bottom: 1rem;">
-                    <textarea id="userMemo" placeholder="旅行のメモを記入..."
-                        style="width: 100%; height: 60px; padding: 8px; border: 1px solid #dee2e6; border-radius: 4px; font-size: 0.875rem; resize: vertical;">
-                    </textarea>
-                    <button class="time-btn" onclick="saveMemo()" style="width: 100%; margin-top: 8px;">
-                        メモ保存
-                    </button>
-                </div>
-            `;
-            document.getElementById('controlPanel').appendChild(memoSection);
-            
-            // 保存されたメモを読み込み
-            const savedMemo = localStorage.getItem('itinerary-memo');
-            if (savedMemo) {
-                document.getElementById('userMemo').value = savedMemo;
-            }
-        }
+        // メモ機能を統合済み
 
-        function saveMemo() {
-            const memo = document.getElementById('userMemo').value;
-            localStorage.setItem('itinerary-memo', memo);
-            alert('メモが保存されました！');
-        }
-
-        // お気に入り機能
-        function addFavoriteFeature() {
-            const favoriteSection = document.createElement('div');
-            favoriteSection.innerHTML = `
-                <h3>⭐ お気に入りスポット</h3>
-                <div id="favoriteSpots" style="margin-bottom: 1rem; font-size: 0.875rem;">
-                    <div id="favoriteList"></div>
-                    <button class="time-btn" onclick="showFavoriteModal()" style="width: 100%; margin-top: 8px;">
-                        お気に入り追加
-                    </button>
-                </div>
-            `;
-            document.getElementById('controlPanel').appendChild(favoriteSection);
-            
-            loadFavorites();
-        }
-
-        function showFavoriteModal() {
-            const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.5); z-index: 1000;
-                display: flex; align-items: center; justify-content: center;
-            `;
-            
-            modal.innerHTML = `
-                <div style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; width: 90%;">
-                    <h3>お気に入りスポット追加</h3>
-                    <input type="text" id="favoriteName" placeholder="スポット名" style="width: 100%; margin: 10px 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <input type="text" id="favoriteLocation" placeholder="場所・住所" style="width: 100%; margin: 10px 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <button onclick="addFavorite()" style="flex: 1; padding: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            追加
-                        </button>
-                        <button onclick="closeFavoriteModal()" style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                            キャンセル
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            window.currentModal = modal;
-        }
-
-        function closeFavoriteModal() {
-            if (window.currentModal) {
-                document.body.removeChild(window.currentModal);
-                window.currentModal = null;
-            }
-        }
-
-        function addFavorite() {
-            const name = document.getElementById('favoriteName').value;
-            const location = document.getElementById('favoriteLocation').value;
-            
-            if (name && location) {
-                const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
-                favorites.push({ name, location, date: new Date().toISOString() });
-                localStorage.setItem('itinerary-favorites', JSON.stringify(favorites));
-                
-                loadFavorites();
-                closeFavoriteModal();
-            }
-        }
-
-        function loadFavorites() {
-            const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
-            const favoriteList = document.getElementById('favoriteList');
-            
-            if (favorites.length === 0) {
-                favoriteList.innerHTML = '<div style="color: #6c757d; text-align: center;">お気に入りはありません</div>';
-                return;
-            }
-            
-            favoriteList.innerHTML = favorites.map((fav, index) => `
-                <div style="margin-bottom: 8px; padding: 8px; background: #f8f9fa; border-radius: 4px;">
-                    <strong>${fav.name}</strong><br>
-                    <small style="color: #6c757d;">${fav.location}</small>
-                    <button onclick="removeFavorite(${index})" style="float: right; background: #e74c3c; color: white; border: none; border-radius: 3px; padding: 2px 6px; font-size: 12px; cursor: pointer;">
-                        削除
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        function removeFavorite(index) {
-            const favorites = JSON.parse(localStorage.getItem('itinerary-favorites') || '[]');
-            favorites.splice(index, 1);
-            localStorage.setItem('itinerary-favorites', JSON.stringify(favorites));
-            loadFavorites();
-        }
+        // お気に入り機能を統合済み
 
         // データ保存・読み込み
         function saveData() {
@@ -2586,11 +4800,7 @@
             });
         }
 
-        // 追加機能の初期化
-        setTimeout(() => {
-            addMemoFeature();
-            addFavoriteFeature();
-        }, 1000);
+        // 追加機能の初期化処理を統合済み
 
         // 地図機能
         function showMap(location) {
@@ -2971,28 +5181,18 @@
             showNotification('データをエクスポートしました！', 'success');
         }
 
-        // 共有・エクスポート機能をコントロールパネルに追加
-        setTimeout(() => {
-            const controlPanel = document.getElementById('controlPanel');
-            const shareSection = document.createElement('div');
-            shareSection.innerHTML = `
-                <h3>📤 共有・エクスポート</h3>
-                <div style="margin-bottom: 1rem;">
-                    <button class="time-btn" onclick="shareItinerary()" style="width: 100%; margin-bottom: 8px;">
-                        🔗 旅程を共有
-                    </button>
-                    <button class="time-btn" onclick="exportItinerary()" style="width: 100%;">
-                        💾 データ保存
-                    </button>
-                </div>
-            `;
-            controlPanel.appendChild(shareSection);
-        }, 1500);
+        // 共有・エクスポート機能を統合済み
 
         // モーダルを閉じるためのイベントリスナー
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('map-modal')) {
                 closeMap();
+            }
+            if (e.target.classList.contains('expense-modal')) {
+                closeExpenseModal();
+            }
+            if (e.target.classList.contains('photo-modal')) {
+                closePhotoModal();
             }
         });
 
@@ -3001,6 +5201,8 @@
             if (e.key === 'Escape') {
                 closeMap();
                 closeFavoriteModal();
+                closeExpenseModal();
+                closePhotoModal();
             }
         });
     </script>
