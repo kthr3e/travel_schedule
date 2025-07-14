@@ -1467,6 +1467,7 @@
                         <div class="weather-icon">${weatherData.icon}</div>
                         <div class="weather-temp">${weatherData.temp}°C</div>
                         <div class="weather-desc">${weatherData.desc}</div>
+                        ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
                     `;
                 } catch (error) {
                     console.error(`天気予報取得エラー (${location}):`, error);
@@ -1476,6 +1477,7 @@
                         <div class="weather-icon">❓</div>
                         <div class="weather-temp">--°C</div>
                         <div class="weather-desc">取得失敗</div>
+                        <div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">--:--</div>
                     `;
                 }
                 
@@ -1484,10 +1486,69 @@
             }
         }
         
+        // 場所別の座標マップ
+        const locationCoords = {
+            '渋谷駅': { lat: 35.6580, lon: 139.7016 },
+            '横浜市中央卸売市場': { lat: 35.4654, lon: 139.6264 },
+            '水産仲卸棟': { lat: 35.4654, lon: 139.6264 },
+            '六角橋商店街': { lat: 35.4824, lon: 139.6073 },
+            'ラーメン末廣家': { lat: 35.4824, lon: 139.6073 },
+            '北仲ブリック＆ホワイト': { lat: 35.4537, lon: 139.6394 },
+            '横浜北仲マルシェ': { lat: 35.4537, lon: 139.6394 },
+            '赤レンガ倉庫': { lat: 35.4526, lon: 139.6425 },
+            'BAY WALK MARKET': { lat: 35.4526, lon: 139.6425 },
+            '新杉田': { lat: 35.4052, lon: 139.5970 },
+            '新杉田駅第四自転車駐車場': { lat: 35.4052, lon: 139.5970 },
+            '杉田家本店': { lat: 35.4052, lon: 139.5970 },
+            '新杉田駅': { lat: 35.4052, lon: 139.5970 },
+            '白楽商店街': { lat: 35.4831, lon: 139.6080 },
+            '六角橋ヤミ市': { lat: 35.4831, lon: 139.6080 },
+            '白楽駅': { lat: 35.4831, lon: 139.6080 },
+            // デフォルト（横浜駅）
+            '不明': { lat: 35.4658, lon: 139.6201 }
+        };
+
         // 場所とイベント時間に基づいた天気予報データを取得
         async function getWeatherForLocation(location, timeIndex) {
             try {
-                // 既存の天気データキャッシュから時間別予報を取得
+                // タイムラインアイテムから実際の時刻を取得
+                const timelineItems = document.querySelectorAll('.timeline-item');
+                let eventTime = null;
+                
+                if (timelineItems[timeIndex]) {
+                    const timeElement = timelineItems[timeIndex].querySelector('.time');
+                    if (timeElement) {
+                        const datetimeAttr = timeElement.getAttribute('datetime');
+                        if (datetimeAttr) {
+                            // 時刻を解析（例：06:55、06:55/08:45、06:55–08:45）
+                            const timeMatch = datetimeAttr.match(/(\d{2}):(\d{2})/);
+                            if (timeMatch) {
+                                const hours = parseInt(timeMatch[1]);
+                                const minutes = parseInt(timeMatch[2]);
+                                
+                                // 2025年7月19日の指定時刻を作成
+                                const targetDate = new Date(2025, 6, 19, hours, minutes);
+                                eventTime = targetDate;
+                            }
+                        }
+                    }
+                }
+                
+                // デフォルトの時刻（現在時刻）
+                if (!eventTime) {
+                    eventTime = new Date();
+                }
+                
+                // 場所の座標を取得
+                const coords = locationCoords[location] || locationCoords['不明'];
+                
+                // Open-Meteo APIから時間別・場所別予報を取得
+                const weatherData = await getHourlyWeatherForTime(eventTime, coords, location);
+                if (weatherData) {
+                    return weatherData;
+                }
+                
+                // フォールバック：既存キャッシュから時間に近いデータを取得
                 if (realtimeCache.weather.data && realtimeCache.weather.data.forecast) {
                     const forecast = realtimeCache.weather.data.forecast;
                     
@@ -1501,44 +1562,22 @@
                         return {
                             icon: getWeatherIconFromCode(weatherCode),
                             temp: temp,
-                            desc: translateWeatherDescription(description)
+                            desc: translateWeatherDescription(description),
+                            time: eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
+                            location: location
                         };
                     }
                 }
                 
-                // APIから新しい天気データを取得
-                const weatherData = await getWeatherFromMultipleSources();
-                if (weatherData && weatherData.forecast) {
-                    // キャッシュを更新
-                    realtimeCache.weather = {
-                        data: weatherData,
-                        timestamp: Date.now(),
-                        ttl: 600000
-                    };
-                    
-                    // 時間別予報から適切なデータを取得
-                    const forecast = weatherData.forecast;
-                    if (forecast.list && forecast.list.length > timeIndex) {
-                        const forecastItem = forecast.list[timeIndex];
-                        const temp = Math.round(forecastItem.main?.temp || weatherData.current.temp);
-                        const weatherCode = forecastItem.weather?.[0]?.main || weatherData.current.weather[0].main;
-                        const description = forecastItem.weather?.[0]?.description || weatherData.current.weather[0].description;
-                        
-                        return {
-                            icon: getWeatherIconFromCode(weatherCode),
-                            temp: temp,
-                            desc: translateWeatherDescription(description)
-                        };
-                    }
-                }
-                
-                // フォールバック：現在の天気データを使用
+                // 最終フォールバック：現在の天気データを使用
                 if (realtimeCache.weather.data && realtimeCache.weather.data.current) {
                     const current = realtimeCache.weather.data.current;
                     return {
                         icon: getWeatherIconFromCode(current.weather[0].main),
                         temp: Math.round(current.temp || current.main.temp),
-                        desc: translateWeatherDescription(current.weather[0].description)
+                        desc: translateWeatherDescription(current.weather[0].description),
+                        time: eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
+                        location: location
                     };
                 }
                 
@@ -1546,6 +1585,162 @@
                 console.error('天気予報取得エラー:', error);
             }
 
+            // エラー時のデフォルト値
+            return {
+                icon: '🌤️',
+                temp: 25,
+                desc: '晴れ',
+                time: eventTime ? eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}) : '--:--',
+                location: location
+            };
+        }
+
+        // 指定時刻と場所の詳細な天気予報を取得
+        async function getHourlyWeatherForTime(targetTime, coords, location) {
+            try {
+                // 2025年7月19日の予報データを取得
+                const date = '2025-07-19';
+                const lat = coords.lat;
+                const lon = coords.lon;
+                
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,weather_code,surface_pressure,cloud_cover,precipitation,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.hourly && data.hourly.time) {
+                    const targetHour = targetTime.getHours();
+                    const targetDate = targetTime.toDateString();
+                    
+                    // 指定時刻に最も近い予報データを検索
+                    for (let i = 0; i < data.hourly.time.length; i++) {
+                        const forecastTime = new Date(data.hourly.time[i]);
+                        if (forecastTime.getHours() === targetHour && forecastTime.toDateString() === targetDate) {
+                            const temp = Math.round(data.hourly.temperature_2m[i]);
+                            const weatherCode = data.hourly.weather_code[i];
+                            const humidity = data.hourly.relative_humidity_2m[i];
+                            const precipitation = data.hourly.precipitation[i];
+                            const windSpeed = data.hourly.wind_speed_10m[i];
+                            
+                            return {
+                                icon: getWeatherIconFromOpenMeteoCode(weatherCode),
+                                temp: temp,
+                                desc: translateOpenMeteoWeatherCode(weatherCode),
+                                time: forecastTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
+                                location: location,
+                                humidity: humidity,
+                                precipitation: precipitation,
+                                windSpeed: windSpeed
+                            };
+                        }
+                    }
+                    
+                    // 完全一致が見つからない場合、最も近い時刻を検索
+                    let closestIndex = 0;
+                    let closestTimeDiff = Math.abs(new Date(data.hourly.time[0]).getTime() - targetTime.getTime());
+                    
+                    for (let i = 1; i < data.hourly.time.length; i++) {
+                        const forecastTime = new Date(data.hourly.time[i]);
+                        const timeDiff = Math.abs(forecastTime.getTime() - targetTime.getTime());
+                        if (timeDiff < closestTimeDiff) {
+                            closestTimeDiff = timeDiff;
+                            closestIndex = i;
+                        }
+                    }
+                    
+                    if (closestIndex >= 0) {
+                        const temp = Math.round(data.hourly.temperature_2m[closestIndex]);
+                        const weatherCode = data.hourly.weather_code[closestIndex];
+                        const forecastTime = new Date(data.hourly.time[closestIndex]);
+                        
+                        return {
+                            icon: getWeatherIconFromOpenMeteoCode(weatherCode),
+                            temp: temp,
+                            desc: translateOpenMeteoWeatherCode(weatherCode),
+                            time: forecastTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
+                            location: location
+                        };
+                    }
+                }
+                
+            } catch (error) {
+                console.error('時間別天気予報取得エラー:', error);
+                return null;
+            }
+        }
+
+        // Open-Meteo天気コードからアイコンを取得
+        function getWeatherIconFromOpenMeteoCode(weatherCode) {
+            const codeMap = {
+                0: '☀️',    // Clear sky
+                1: '🌤️',    // Mainly clear
+                2: '⛅',     // Partly cloudy
+                3: '☁️',     // Overcast
+                45: '🌫️',   // Fog
+                48: '🌫️',   // Depositing rime fog
+                51: '🌦️',   // Light drizzle
+                53: '🌦️',   // Moderate drizzle
+                55: '🌧️',   // Dense drizzle
+                56: '🌧️',   // Light freezing drizzle
+                57: '🌧️',   // Dense freezing drizzle
+                61: '🌧️',   // Slight rain
+                63: '🌧️',   // Moderate rain
+                65: '🌧️',   // Heavy rain
+                66: '🌧️',   // Light freezing rain
+                67: '🌧️',   // Heavy freezing rain
+                71: '🌨️',   // Slight snow fall
+                73: '🌨️',   // Moderate snow fall
+                75: '🌨️',   // Heavy snow fall
+                77: '🌨️',   // Snow grains
+                80: '🌦️',   // Slight rain showers
+                81: '🌧️',   // Moderate rain showers
+                82: '🌧️',   // Violent rain showers
+                85: '🌨️',   // Slight snow showers
+                86: '🌨️',   // Heavy snow showers
+                95: '⛈️',   // Thunderstorm
+                96: '⛈️',   // Thunderstorm with slight hail
+                99: '⛈️'    // Thunderstorm with heavy hail
+            };
+            return codeMap[weatherCode] || '🌤️';
+        }
+
+        // Open-Meteo天気コードを日本語に翻訳
+        function translateOpenMeteoWeatherCode(weatherCode) {
+            const translations = {
+                0: '快晴',
+                1: '概ね晴れ',
+                2: '一部曇り',
+                3: '曇り',
+                45: '霧',
+                48: '霧雨',
+                51: '小雨',
+                53: '雨',
+                55: '強い雨',
+                56: '氷雨',
+                57: '強い氷雨',
+                61: '小雨',
+                63: '雨',
+                65: '大雨',
+                66: '氷雨',
+                67: '強い氷雨',
+                71: '小雪',
+                73: '雪',
+                75: '大雪',
+                77: '雪粒',
+                80: '小雨（一時的）',
+                81: '雨（一時的）',
+                82: '大雨（一時的）',
+                85: '小雪（一時的）',
+                86: '大雪（一時的）',
+                95: '雷雨',
+                96: '雷雨（雹）',
+                99: '激しい雷雨（雹）'
+            };
+            return translations[weatherCode] || '晴れ';
         }
         
         // 天気コードからアイコンを取得
@@ -4848,16 +5043,46 @@
         
         // 天気予報の手動更新
         async function updateAllWeatherForecasts() {
-            const weatherForecasts = document.querySelectorAll('.weather-forecast');
+            const timelineItems = document.querySelectorAll('.timeline-item');
             
-            // 既存の天気予報をクリア
-            weatherForecasts.forEach(forecast => forecast.remove());
-            
-            // 天気データキャッシュをクリア
-            realtimeCache.weather = { data: null, timestamp: 0, ttl: 600000 };
-            
-            // 天気予報を再取得・再表示
-            await addWeatherForecastToTimeline();
+            for (let index = 0; index < timelineItems.length; index++) {
+                const item = timelineItems[index];
+                const weatherForecast = item.querySelector('.weather-forecast');
+                
+                if (weatherForecast) {
+                    try {
+                        // ローディング表示
+                        weatherForecast.innerHTML = `
+                            <div class="weather-icon">🔄</div>
+                            <div class="weather-temp">--°C</div>
+                            <div class="weather-desc">更新中...</div>
+                        `;
+                        
+                        const location = item.dataset.location || '不明';
+                        const weatherData = await getWeatherForLocation(location, index);
+                        
+                        // 天気予報を更新
+                        weatherForecast.innerHTML = `
+                            <div class="weather-icon">${weatherData.icon}</div>
+                            <div class="weather-temp">${weatherData.temp}°C</div>
+                            <div class="weather-desc">${weatherData.desc}</div>
+                            ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
+                        `;
+                        
+                        // 少し遅延を入れてAPI負荷を軽減
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        
+                    } catch (error) {
+                        console.error(`天気予報更新エラー (${item.dataset.location}):`, error);
+                        
+                        weatherForecast.innerHTML = `
+                            <div class="weather-icon">❓</div>
+                            <div class="weather-temp">--°C</div>
+                            <div class="weather-desc">更新失敗</div>
+                        `;
+                    }
+                }
+            }
             
             showNotification('天気予報を更新しました', 'success');
         }
@@ -4868,6 +5093,7 @@
             setInterval(async () => {
                 if (isOnline) {
                     try {
+                        console.log('天気予報を自動更新中...');
                         await updateAllWeatherForecasts();
                         console.log('天気予報を自動更新しました');
                     } catch (error) {
@@ -4875,17 +5101,6 @@
                     }
                 }
             }, 600000); // 10分
-            
-            const codeMap = {
-                0: 'Clear',
-                1: 'Clear', 2: 'Clouds', 3: 'Clouds',
-                45: 'Fog', 48: 'Fog',
-                51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle',
-                61: 'Rain', 63: 'Rain', 65: 'Rain',
-                80: 'Rain', 81: 'Rain', 82: 'Rain',
-                95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm'
-            };
-            return codeMap[code] || 'Clear';
         }
         
         // 天気コードから説明を取得
