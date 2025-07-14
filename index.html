@@ -638,7 +638,7 @@
         /* Weather forecast in timeline cards */
         .weather-forecast {
             position: absolute;
-            top: 50px;
+            top: 10px;
             right: 10px;
             background: rgba(52, 152, 219, 0.1);
             border: 1px solid rgba(52, 152, 219, 0.3);
@@ -649,6 +649,7 @@
             max-width: 120px;
             text-align: center;
             z-index: 5;
+            min-height: 60px;
         }
 
         .weather-forecast .weather-icon {
@@ -674,7 +675,41 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             padding: var(--spacing-md);
+            padding-right: 140px; /* 天気予報用のスペースを確保 */
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Mobile adjustments for weather forecast */
+        @media (max-width: 768px) {
+            .weather-forecast {
+                position: static;
+                float: right;
+                margin-bottom: 10px;
+                margin-left: 10px;
+                max-width: 100px;
+                min-height: auto;
+            }
+            
+            .timeline-card {
+                padding-right: var(--spacing-md);
+            }
+            
+            /* 天気予報専用のコンテナを作成 */
+            .weather-container {
+                float: right;
+                width: 100px;
+                margin-bottom: 10px;
+                clear: right;
+            }
+            
+            .activity {
+                margin-right: 110px; /* 天気予報分のマージンを確保 */
+            }
+            
+            .description {
+                clear: both;
+                margin-top: 10px;
+            }
         }
 
         .action-btn.map-btn {
@@ -1445,6 +1480,10 @@
                 const timelineCard = item.querySelector('.timeline-card');
                 const location = item.dataset.location || '不明';
                 
+                // スマホ表示用の天気予報コンテナを作成
+                const weatherContainer = document.createElement('div');
+                weatherContainer.className = 'weather-container';
+                
                 // 天気予報要素を作成
                 const weatherForecast = document.createElement('div');
                 weatherForecast.className = 'weather-forecast';
@@ -1456,7 +1495,15 @@
                     <div class="weather-desc">取得中...</div>
                 `;
                 
-                timelineCard.appendChild(weatherForecast);
+                weatherContainer.appendChild(weatherForecast);
+                
+                // activityタイトルの後に挿入（モバイルでは適切な位置に配置）
+                const activityElement = timelineCard.querySelector('.activity');
+                if (activityElement) {
+                    activityElement.parentNode.insertBefore(weatherContainer, activityElement.nextSibling);
+                } else {
+                    timelineCard.appendChild(weatherContainer);
+                }
                 
                 // 非同期で天気データを取得
                 try {
@@ -1834,10 +1881,10 @@
             setTimeout(() => {
                 showNotification('🚀 横浜旅行アプリ準備完了！', 'success');
                 
-                // インストールプロンプトを表示
-                setTimeout(() => {
-                    showInstallPrompt();
-                }, 3000);
+                // インストールプロンプトは表示しない（無効化）
+                // setTimeout(() => {
+                //     showInstallPrompt();
+                // }, 3000);
                 
                 // 開始スタンプ獲得チェック
                 if (!gameState.stamps.has('shibuya_start')) {
@@ -2003,84 +2050,16 @@
             }
         }
         
-        // インストールプロンプト表示
+        // インストールプロンプト表示（無効化）
         function showInstallPrompt() {
-            // 既にPWAモードまたはモバイルでない場合はスキップ
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                !window.matchMedia('(max-width: 768px)').matches) {
-                return;
-            }
-            
-            const installBanner = document.createElement('div');
-            installBanner.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 16px;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-                z-index: 1002;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                animation: slideUpBanner 0.5s ease-out;
-            `;
-            
-            installBanner.innerHTML = `
-                <div style="flex: 1;">
-                    <div style="font-weight: bold; margin-bottom: 4px;">📱 アプリとして追加</div>
-                    <div style="font-size: 14px; opacity: 0.9;">ホーム画面に追加してオフラインでも利用</div>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button onclick="installPWA()" style="
-                        background: rgba(255, 255, 255, 0.2);
-                        border: 1px solid rgba(255, 255, 255, 0.3);
-                        color: white;
-                        padding: 8px 16px;
-                        border-radius: 6px;
-                        font-size: 14px;
-                        cursor: pointer;
-                    ">追加</button>
-                    <button onclick="this.closest('div').remove()" style="
-                        background: none;
-                        border: none;
-                        color: white;
-                        font-size: 18px;
-                        cursor: pointer;
-                        padding: 4px;
-                    ">×</button>
-                </div>
-            `;
-            
-            document.body.appendChild(installBanner);
-            
-            // 15秒後に自動で消去
-            setTimeout(() => {
-                if (installBanner.parentNode) {
-                    installBanner.remove();
-                }
-            }, 15000);
+            // インストールプロンプトは表示しない
+            return;
         }
         
-        // PWAインストール実行
+        // PWAインストール実行（無効化）
         function installPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('PWAインストール承認');
-                    } else {
-                        console.log('PWAインストール拒否');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                // フォールバック：手動インストールガイド
-                showManualInstallGuide();
-            }
+            // インストール機能は無効化されています
+            return;
         }
         
         // 手動インストールガイド
@@ -5047,39 +5026,43 @@
             
             for (let index = 0; index < timelineItems.length; index++) {
                 const item = timelineItems[index];
-                const weatherForecast = item.querySelector('.weather-forecast');
+                const weatherContainer = item.querySelector('.weather-container');
                 
-                if (weatherForecast) {
-                    try {
-                        // ローディング表示
-                        weatherForecast.innerHTML = `
-                            <div class="weather-icon">🔄</div>
-                            <div class="weather-temp">--°C</div>
-                            <div class="weather-desc">更新中...</div>
-                        `;
-                        
-                        const location = item.dataset.location || '不明';
-                        const weatherData = await getWeatherForLocation(location, index);
-                        
-                        // 天気予報を更新
-                        weatherForecast.innerHTML = `
-                            <div class="weather-icon">${weatherData.icon}</div>
-                            <div class="weather-temp">${weatherData.temp}°C</div>
-                            <div class="weather-desc">${weatherData.desc}</div>
-                            ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
-                        `;
-                        
-                        // 少し遅延を入れてAPI負荷を軽減
-                        await new Promise(resolve => setTimeout(resolve, 200));
-                        
-                    } catch (error) {
-                        console.error(`天気予報更新エラー (${item.dataset.location}):`, error);
-                        
-                        weatherForecast.innerHTML = `
-                            <div class="weather-icon">❓</div>
-                            <div class="weather-temp">--°C</div>
-                            <div class="weather-desc">更新失敗</div>
-                        `;
+                if (weatherContainer) {
+                    const weatherForecast = weatherContainer.querySelector('.weather-forecast');
+                    
+                    if (weatherForecast) {
+                        try {
+                            // ローディング表示
+                            weatherForecast.innerHTML = `
+                                <div class="weather-icon">🔄</div>
+                                <div class="weather-temp">--°C</div>
+                                <div class="weather-desc">更新中...</div>
+                            `;
+                            
+                            const location = item.dataset.location || '不明';
+                            const weatherData = await getWeatherForLocation(location, index);
+                            
+                            // 天気予報を更新
+                            weatherForecast.innerHTML = `
+                                <div class="weather-icon">${weatherData.icon}</div>
+                                <div class="weather-temp">${weatherData.temp}°C</div>
+                                <div class="weather-desc">${weatherData.desc}</div>
+                                ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
+                            `;
+                            
+                            // 少し遅延を入れてAPI負荷を軽減
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                            
+                        } catch (error) {
+                            console.error(`天気予報更新エラー (${item.dataset.location}):`, error);
+                            
+                            weatherForecast.innerHTML = `
+                                <div class="weather-icon">❓</div>
+                                <div class="weather-temp">--°C</div>
+                                <div class="weather-desc">更新失敗</div>
+                            `;
+                        }
                     }
                 }
             }
