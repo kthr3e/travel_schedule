@@ -125,6 +125,16 @@
             background: var(--accent-color);
         }
 
+        /* Historical site markers */
+        .timeline-item.historical::before {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            border: 4px solid var(--card-background);
+        }
+
+        .timeline-item.historical .activity {
+            color: #8B4513;
+        }
+
         /* Timeline card */
         .timeline-card {
             background: var(--card-background);
@@ -635,83 +645,6 @@
             gap: 4px;
         }
 
-        /* Weather forecast in timeline cards */
-        .weather-forecast {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(52, 152, 219, 0.1);
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 11px;
-            line-height: 1.2;
-            max-width: 120px;
-            text-align: center;
-            z-index: 5;
-            min-height: 60px;
-        }
-
-        .weather-forecast .weather-icon {
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-
-        .weather-forecast .weather-temp {
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 2px;
-        }
-
-        .weather-forecast .weather-desc {
-            color: var(--text-muted);
-            font-size: 10px;
-        }
-
-        /* Timeline card positioning */
-        .timeline-card {
-            position: relative;
-            background: var(--card-background);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: var(--spacing-md);
-            padding-right: 140px; /* 天気予報用のスペースを確保 */
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        /* Mobile adjustments for weather forecast */
-        @media (max-width: 768px) {
-            .weather-forecast {
-                position: static;
-                float: right;
-                margin-bottom: 10px;
-                margin-left: 10px;
-                max-width: 100px;
-                min-height: auto;
-            }
-            
-            .timeline-card {
-                padding-right: var(--spacing-md);
-            }
-            
-            /* 天気予報専用のコンテナを作成 */
-            .weather-container {
-                float: right;
-                width: 100px;
-                margin-bottom: 10px;
-                clear: right;
-            }
-            
-            .activity {
-                margin-right: 110px; /* 天気予報分のマージンを確保 */
-            }
-            
-            .description {
-                clear: both;
-                margin-top: 10px;
-            }
-        }
-
         .action-btn.map-btn {
             background: #3498db;
             color: white;
@@ -749,6 +682,7 @@
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
+            z-index: 10;
         }
 
         .status-indicator.completed {
@@ -764,6 +698,82 @@
         .status-indicator.upcoming {
             background: #fff3cd;
             color: #856404;
+        }
+
+        /* Weather info in timeline items */
+        .weather-info {
+            position: absolute;
+            top: 10px;
+            right: 80px; /* ステータスインジケーターの左側に配置 */
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 5;
+            max-width: 120px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-info .weather-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .weather-info .weather-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+        }
+
+        .weather-info .weather-temp {
+            font-weight: 600;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+
+        .weather-info .weather-desc {
+            color: var(--text-muted);
+            font-size: 10px;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* モバイル対応での調整 */
+        @media (max-width: 768px) {
+            .weather-info {
+                position: static;
+                margin-top: 8px;
+                margin-bottom: 8px;
+                max-width: none;
+                display: inline-flex;
+            }
+            
+            .status-indicator {
+                position: static;
+                margin-bottom: 8px;
+                display: inline-block;
+            }
+            
+            .timeline-card {
+                position: relative;
+                padding-top: 12px;
+            }
+            
+            .status-weather-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 8px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
         }
 
         /* Notification system */
@@ -961,6 +971,90 @@
                 </div>
             </article>
 
+            <!-- 歴史スポット1 -->
+            <article class="timeline-item historical" data-location="品川宿">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="07:20">07:20</time>
+                    <h2 class="activity">🏛️ 品川宿（東海道一番目の宿場）</h2>
+                    <div class="description">
+                        アーチ形の"旧東海道"案内ゲートと街道灯が並ぶ宿場跡。道沿い右手に「品川宿交流館 本宿お休み処」の白壁が見える。<br>
+                        <a href="https://www.gltjp.com/ja/directory/item/11086/" target="_blank" rel="noopener noreferrer">好運日本行 - 旧東海道 品川宿</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('品川宿')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('品川宿')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット2 -->
+            <article class="timeline-item historical" data-location="川崎宿跡">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="07:50">07:50</time>
+                    <h2 class="activity">🏛️ 川崎宿跡</h2>
+                    <div class="description">
+                        「東海道川崎宿」の行灯形街灯と芭蕉句碑（左歩道側）。本陣跡は交差点に説明板のみ残存。<br>
+                        <a href="https://www.tabirai.net/localinfo/article/article-23188/" target="_blank" rel="noopener noreferrer">たびらい - 川崎の旧東海道</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('川崎宿跡')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('川崎宿跡')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット3 -->
+            <article class="timeline-item historical" data-location="生麦事件碑">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="08:10">08:10</time>
+                    <h2 class="activity">🏛️ 生麦事件碑</h2>
+                    <div class="description">
+                        国道15号と旧東海道が交わる角の石碑。薩英戦争の発端となった事件を伝える。歩道から数秒で視認可能。<br>
+                        <a href="https://trip.pref.kanagawa.jp/sc/destination/scene-of-the-namamugi-incident-and-monument/140" target="_blank" rel="noopener noreferrer">神奈川県観光 - 生麦事件碑</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('生麦事件碑')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('生麦事件碑')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット4 -->
+            <article class="timeline-item historical" data-location="神奈川宿歴史の道">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="08:25">08:25</time>
+                    <h2 class="activity">🏛️ 神奈川宿歴史の道</h2>
+                    <div class="description">
+                        街路樹が並ぶ坂道沿いに宿場解説パネル。「袖ヶ浦」の入江跡を見下ろす少し高台の景観。<br>
+                        <a href="https://www.kanagawa-kankou.or.jp/features/tokaido-column515943" target="_blank" rel="noopener noreferrer">神奈川県観光協会 - 旧東海道 神奈川宿</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('神奈川宿歴史の道')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('神奈川宿歴史の道')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
             <!-- イベント1 -->
             <article class="timeline-item event" data-location="水産仲卸棟">
                 <div class="timeline-card">
@@ -997,6 +1091,27 @@
                         <a href="https://maps.google.com/maps/dir/横浜市中央卸売市場/六角橋商店街" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット5 -->
+            <article class="timeline-item historical" data-location="神奈川宿歴史の道案内板">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="09:55">09:55頃</time>
+                    <h2 class="activity">🏛️ 神奈川宿"歴史の道"案内板</h2>
+                    <div class="description">
+                        江戸から３番目の宿場。坂道沿いに旧本陣跡や宿場絵図パネルが立つ。坂上のビル壁面に浮世絵レプリカ。<br>
+                        <a href="https://www.city.yokohama.lg.jp/kanagawa/shokai/rekishi/syuku.html" target="_blank" rel="noopener noreferrer">横浜市公式サイト - 神奈川宿歴史の道</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('神奈川宿歴史の道案内板')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('神奈川宿歴史の道案内板')">
+                            🏛️ 歴史詳細
+                        </button>
                     </div>
                 </div>
             </article>
@@ -1062,6 +1177,48 @@
                 </div>
             </article>
 
+            <!-- 歴史スポット6 -->
+            <article class="timeline-item historical" data-location="馬車道">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="11:55">11:55頃</time>
+                    <h2 class="activity">🏛️ 馬車道（バシャミチ）石畳とガス灯</h2>
+                    <div class="description">
+                        1866年に開削された「馬車が通る道」。路肩には明治初のガス灯レプリカと"Carriage Road"銘板。<br>
+                        <a href="https://yokohamatravelguide.com/bashamichi-yokohamas-historic-gem/" target="_blank" rel="noopener noreferrer">Yokohama Travel Guide - Bashamichi</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('馬車道')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('馬車道')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット7 -->
+            <article class="timeline-item historical" data-location="横浜三塔">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="12:05/12:10">12:05–12:10</time>
+                    <h2 class="activity">🏛️ 横浜三塔 King・Queen・Jack</h2>
+                    <div class="description">
+                        1920年代〜1930年代竣工。塔の愛称は船乗りが航路標識にした伝承に由来。県庁（King）は帝冠様式、税関（Queen）はイスラム風ドームが特徴。<br>
+                        <a href="https://www.yokohamajapan.com/things-to-do/detail.php?id=54" target="_blank" rel="noopener noreferrer">横浜ジャパン - King's Tower</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('横浜三塔')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('横浜三塔')">
+                            🏛️ 歴史詳細
+                        </button>
+                    </div>
+                </div>
+            </article>
+
             <!-- イベント2 -->
             <article class="timeline-item event" data-location="横浜北仲マルシェ">
                 <div class="timeline-card">
@@ -1098,6 +1255,27 @@
                         <a href="https://maps.google.com/maps/dir/北仲/赤レンガ倉庫" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット8 -->
+            <article class="timeline-item historical" data-location="横浜赤レンガ倉庫">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">到着</div>
+                    <time class="time" datetime="14:05/14:15">14:05–14:15</time>
+                    <h2 class="activity">🏛️ 横浜赤レンガ倉庫（1911/1913）</h2>
+                    <div class="description">
+                        明治後期に建てられた煉瓦造りの旧税関倉庫。関東大震災後も残った耐震煉瓦の迫力をサドル越しに一望。<br>
+                        <a href="https://en.wikipedia.org/wiki/Yokohama_Red_Brick_Warehouse" target="_blank" rel="noopener noreferrer">Wikipedia - 横浜赤レンガ倉庫</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('横浜赤レンガ倉庫')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('横浜赤レンガ倉庫')">
+                            🏛️ 歴史詳細
+                        </button>
                     </div>
                 </div>
             </article>
@@ -1139,6 +1317,27 @@
                         <a href="https://maps.google.com/maps/dir/赤レンガ倉庫/新杉田" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 歴史スポット9 -->
+            <article class="timeline-item historical" data-location="旧根岸競馬場">
+                <div class="timeline-card">
+                    <div class="status-indicator upcoming">通過</div>
+                    <time class="time" datetime="15:25">15:25頃</time>
+                    <h2 class="activity">🏛️ 旧根岸競馬場一等観覧席跡（1866）</h2>
+                    <div class="description">
+                        日本最古の洋式競馬場スタンド遺構。国道357号から左前方高台に白い石造建築が見える。<br>
+                        <a href="https://offbeatjapan.com/negishi-racecourse-yokohama-story/" target="_blank" rel="noopener noreferrer">Offbeat Japan - Negishi Racecourse</a>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn map-btn" onclick="showMap('旧根岸競馬場')">
+                            📍 地図
+                        </button>
+                        <button class="action-btn info-btn" onclick="showHistoryInfo('旧根岸競馬場')">
+                            🏛️ 歴史詳細
+                        </button>
                     </div>
                 </div>
             </article>
@@ -1456,386 +1655,21 @@
 
             // 自動更新タイマー
             setInterval(updateCurrentTime, 60000); // 1分ごとに更新
+            
+            // ウィンドウサイズ変更時の処理
+            window.addEventListener('resize', handleWindowResize);
         });
-
-        // イベントごとの天気予報を追加
-        async function addWeatherForecastToTimeline() {
-            const timelineItems = document.querySelectorAll('.timeline-item');
-            
-            // 天気データを事前に取得
-            try {
-                if (!isDataCached('weather')) {
-                    await getWeatherData();
-                }
-            } catch (error) {
-                console.error('天気データ取得エラー:', error);
-            }
-            
-            for (let index = 0; index < timelineItems.length; index++) {
-                const item = timelineItems[index];
-                
-                // 既に天気予報が追加されている場合はスキップ
-                if (item.querySelector('.weather-forecast')) continue;
-                
-                const timelineCard = item.querySelector('.timeline-card');
-                const location = item.dataset.location || '不明';
-                
-                // スマホ表示用の天気予報コンテナを作成
-                const weatherContainer = document.createElement('div');
-                weatherContainer.className = 'weather-container';
-                
-                // 天気予報要素を作成
-                const weatherForecast = document.createElement('div');
-                weatherForecast.className = 'weather-forecast';
-                
-                // ローディング表示
-                weatherForecast.innerHTML = `
-                    <div class="weather-icon">🔄</div>
-                    <div class="weather-temp">--°C</div>
-                    <div class="weather-desc">取得中...</div>
-                `;
-                
-                weatherContainer.appendChild(weatherForecast);
-                
-                // activityタイトルの後に挿入（モバイルでは適切な位置に配置）
-                const activityElement = timelineCard.querySelector('.activity');
-                if (activityElement) {
-                    activityElement.parentNode.insertBefore(weatherContainer, activityElement.nextSibling);
-                } else {
-                    timelineCard.appendChild(weatherContainer);
-                }
-                
-                // 非同期で天気データを取得
-                try {
-                    const weatherData = await getWeatherForLocation(location, index);
-                    
-                    // 天気予報を更新
-                    weatherForecast.innerHTML = `
-                        <div class="weather-icon">${weatherData.icon}</div>
-                        <div class="weather-temp">${weatherData.temp}°C</div>
-                        <div class="weather-desc">${weatherData.desc}</div>
-                        ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
-                    `;
-                } catch (error) {
-                    console.error(`天気予報取得エラー (${location}):`, error);
-                    
-                    // エラー時のフォールバック表示
-                    weatherForecast.innerHTML = `
-                        <div class="weather-icon">❓</div>
-                        <div class="weather-temp">--°C</div>
-                        <div class="weather-desc">取得失敗</div>
-                        <div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">--:--</div>
-                    `;
-                }
-                
-                // 少し遅延を入れてAPI負荷を軽減
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-        }
         
-        // 場所別の座標マップ
-        const locationCoords = {
-            '渋谷駅': { lat: 35.6580, lon: 139.7016 },
-            '横浜市中央卸売市場': { lat: 35.4654, lon: 139.6264 },
-            '水産仲卸棟': { lat: 35.4654, lon: 139.6264 },
-            '六角橋商店街': { lat: 35.4824, lon: 139.6073 },
-            'ラーメン末廣家': { lat: 35.4824, lon: 139.6073 },
-            '北仲ブリック＆ホワイト': { lat: 35.4537, lon: 139.6394 },
-            '横浜北仲マルシェ': { lat: 35.4537, lon: 139.6394 },
-            '赤レンガ倉庫': { lat: 35.4526, lon: 139.6425 },
-            'BAY WALK MARKET': { lat: 35.4526, lon: 139.6425 },
-            '新杉田': { lat: 35.4052, lon: 139.5970 },
-            '新杉田駅第四自転車駐車場': { lat: 35.4052, lon: 139.5970 },
-            '杉田家本店': { lat: 35.4052, lon: 139.5970 },
-            '新杉田駅': { lat: 35.4052, lon: 139.5970 },
-            '白楽商店街': { lat: 35.4831, lon: 139.6080 },
-            '六角橋ヤミ市': { lat: 35.4831, lon: 139.6080 },
-            '白楽駅': { lat: 35.4831, lon: 139.6080 },
-            // デフォルト（横浜駅）
-            '不明': { lat: 35.4658, lon: 139.6201 }
-        };
-
-        // 場所とイベント時間に基づいた天気予報データを取得
-        async function getWeatherForLocation(location, timeIndex) {
-            try {
-                // タイムラインアイテムから実際の時刻を取得
-                const timelineItems = document.querySelectorAll('.timeline-item');
-                let eventTime = null;
-                
-                if (timelineItems[timeIndex]) {
-                    const timeElement = timelineItems[timeIndex].querySelector('.time');
-                    if (timeElement) {
-                        const datetimeAttr = timeElement.getAttribute('datetime');
-                        if (datetimeAttr) {
-                            // 時刻を解析（例：06:55、06:55/08:45、06:55–08:45）
-                            const timeMatch = datetimeAttr.match(/(\d{2}):(\d{2})/);
-                            if (timeMatch) {
-                                const hours = parseInt(timeMatch[1]);
-                                const minutes = parseInt(timeMatch[2]);
-                                
-                                // 2025年7月19日の指定時刻を作成
-                                const targetDate = new Date(2025, 6, 19, hours, minutes);
-                                eventTime = targetDate;
-                            }
-                        }
-                    }
-                }
-                
-                // デフォルトの時刻（現在時刻）
-                if (!eventTime) {
-                    eventTime = new Date();
-                }
-                
-                // 場所の座標を取得
-                const coords = locationCoords[location] || locationCoords['不明'];
-                
-                // Open-Meteo APIから時間別・場所別予報を取得
-                const weatherData = await getHourlyWeatherForTime(eventTime, coords, location);
-                if (weatherData) {
-                    return weatherData;
-                }
-                
-                // フォールバック：既存キャッシュから時間に近いデータを取得
-                if (realtimeCache.weather.data && realtimeCache.weather.data.forecast) {
-                    const forecast = realtimeCache.weather.data.forecast;
-                    
-                    // 時間インデックスに基づいて適切な予報データを選択
-                    if (forecast.list && forecast.list.length > timeIndex) {
-                        const forecastItem = forecast.list[timeIndex];
-                        const temp = Math.round(forecastItem.main?.temp || 25);
-                        const weatherCode = forecastItem.weather?.[0]?.main || 'Clear';
-                        const description = forecastItem.weather?.[0]?.description || '晴れ';
-                        
-                        return {
-                            icon: getWeatherIconFromCode(weatherCode),
-                            temp: temp,
-                            desc: translateWeatherDescription(description),
-                            time: eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
-                            location: location
-                        };
-                    }
-                }
-                
-                // 最終フォールバック：現在の天気データを使用
-                if (realtimeCache.weather.data && realtimeCache.weather.data.current) {
-                    const current = realtimeCache.weather.data.current;
-                    return {
-                        icon: getWeatherIconFromCode(current.weather[0].main),
-                        temp: Math.round(current.temp || current.main.temp),
-                        desc: translateWeatherDescription(current.weather[0].description),
-                        time: eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
-                        location: location
-                    };
-                }
-                
-            } catch (error) {
-                console.error('天気予報取得エラー:', error);
+        // ウィンドウサイズ変更時の処理
+        function handleWindowResize() {
+            // 天気情報の配置を更新
+            if (realtimeCache.weather.data) {
+                addWeatherToTimelineItems(realtimeCache.weather.data);
             }
-
-            // エラー時のデフォルト値
-            return {
-                icon: '🌤️',
-                temp: 25,
-                desc: '晴れ',
-                time: eventTime ? eventTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}) : '--:--',
-                location: location
-            };
-        }
-
-        // 指定時刻と場所の詳細な天気予報を取得
-        async function getHourlyWeatherForTime(targetTime, coords, location) {
-            try {
-                // 2025年7月19日の予報データを取得
-                const date = '2025-07-19';
-                const lat = coords.lat;
-                const lon = coords.lon;
-                
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,weather_code,surface_pressure,cloud_cover,precipitation,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTokyo&start_date=${date}&end_date=${date}`;
-                
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                if (data.hourly && data.hourly.time) {
-                    const targetHour = targetTime.getHours();
-                    const targetDate = targetTime.toDateString();
-                    
-                    // 指定時刻に最も近い予報データを検索
-                    for (let i = 0; i < data.hourly.time.length; i++) {
-                        const forecastTime = new Date(data.hourly.time[i]);
-                        if (forecastTime.getHours() === targetHour && forecastTime.toDateString() === targetDate) {
-                            const temp = Math.round(data.hourly.temperature_2m[i]);
-                            const weatherCode = data.hourly.weather_code[i];
-                            const humidity = data.hourly.relative_humidity_2m[i];
-                            const precipitation = data.hourly.precipitation[i];
-                            const windSpeed = data.hourly.wind_speed_10m[i];
-                            
-                            return {
-                                icon: getWeatherIconFromOpenMeteoCode(weatherCode),
-                                temp: temp,
-                                desc: translateOpenMeteoWeatherCode(weatherCode),
-                                time: forecastTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
-                                location: location,
-                                humidity: humidity,
-                                precipitation: precipitation,
-                                windSpeed: windSpeed
-                            };
-                        }
-                    }
-                    
-                    // 完全一致が見つからない場合、最も近い時刻を検索
-                    let closestIndex = 0;
-                    let closestTimeDiff = Math.abs(new Date(data.hourly.time[0]).getTime() - targetTime.getTime());
-                    
-                    for (let i = 1; i < data.hourly.time.length; i++) {
-                        const forecastTime = new Date(data.hourly.time[i]);
-                        const timeDiff = Math.abs(forecastTime.getTime() - targetTime.getTime());
-                        if (timeDiff < closestTimeDiff) {
-                            closestTimeDiff = timeDiff;
-                            closestIndex = i;
-                        }
-                    }
-                    
-                    if (closestIndex >= 0) {
-                        const temp = Math.round(data.hourly.temperature_2m[closestIndex]);
-                        const weatherCode = data.hourly.weather_code[closestIndex];
-                        const forecastTime = new Date(data.hourly.time[closestIndex]);
-                        
-                        return {
-                            icon: getWeatherIconFromOpenMeteoCode(weatherCode),
-                            temp: temp,
-                            desc: translateOpenMeteoWeatherCode(weatherCode),
-                            time: forecastTime.toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'}),
-                            location: location
-                        };
-                    }
-                }
-                
-            } catch (error) {
-                console.error('時間別天気予報取得エラー:', error);
-                return null;
-            }
-        }
-
-        // Open-Meteo天気コードからアイコンを取得
-        function getWeatherIconFromOpenMeteoCode(weatherCode) {
-            const codeMap = {
-                0: '☀️',    // Clear sky
-                1: '🌤️',    // Mainly clear
-                2: '⛅',     // Partly cloudy
-                3: '☁️',     // Overcast
-                45: '🌫️',   // Fog
-                48: '🌫️',   // Depositing rime fog
-                51: '🌦️',   // Light drizzle
-                53: '🌦️',   // Moderate drizzle
-                55: '🌧️',   // Dense drizzle
-                56: '🌧️',   // Light freezing drizzle
-                57: '🌧️',   // Dense freezing drizzle
-                61: '🌧️',   // Slight rain
-                63: '🌧️',   // Moderate rain
-                65: '🌧️',   // Heavy rain
-                66: '🌧️',   // Light freezing rain
-                67: '🌧️',   // Heavy freezing rain
-                71: '🌨️',   // Slight snow fall
-                73: '🌨️',   // Moderate snow fall
-                75: '🌨️',   // Heavy snow fall
-                77: '🌨️',   // Snow grains
-                80: '🌦️',   // Slight rain showers
-                81: '🌧️',   // Moderate rain showers
-                82: '🌧️',   // Violent rain showers
-                85: '🌨️',   // Slight snow showers
-                86: '🌨️',   // Heavy snow showers
-                95: '⛈️',   // Thunderstorm
-                96: '⛈️',   // Thunderstorm with slight hail
-                99: '⛈️'    // Thunderstorm with heavy hail
-            };
-            return codeMap[weatherCode] || '🌤️';
-        }
-
-        // Open-Meteo天気コードを日本語に翻訳
-        function translateOpenMeteoWeatherCode(weatherCode) {
-            const translations = {
-                0: '快晴',
-                1: '概ね晴れ',
-                2: '一部曇り',
-                3: '曇り',
-                45: '霧',
-                48: '霧雨',
-                51: '小雨',
-                53: '雨',
-                55: '強い雨',
-                56: '氷雨',
-                57: '強い氷雨',
-                61: '小雨',
-                63: '雨',
-                65: '大雨',
-                66: '氷雨',
-                67: '強い氷雨',
-                71: '小雪',
-                73: '雪',
-                75: '大雪',
-                77: '雪粒',
-                80: '小雨（一時的）',
-                81: '雨（一時的）',
-                82: '大雨（一時的）',
-                85: '小雪（一時的）',
-                86: '大雪（一時的）',
-                95: '雷雨',
-                96: '雷雨（雹）',
-                99: '激しい雷雨（雹）'
-            };
-            return translations[weatherCode] || '晴れ';
-        }
-        
-        // 天気コードからアイコンを取得
-        function getWeatherIconFromCode(weatherCode) {
-            const iconMap = {
-                'Clear': '☀️',
-                'Clouds': '⛅',
-                'Rain': '🌧️',
-                'Drizzle': '🌦️',
-                'Thunderstorm': '⛈️',
-                'Snow': '🌨️',
-                'Mist': '🌫️',
-                'Fog': '🌫️',
-                'Haze': '🌫️'
-            };
-            return iconMap[weatherCode] || '🌤️';
-        }
-        
-        // 天気説明を日本語に翻訳
-        function translateWeatherDescription(description) {
-            const translations = {
-                'clear sky': '快晴',
-                'few clouds': '晴れ時々曇り',
-                'scattered clouds': '晴れ時々曇り',
-                'broken clouds': '曇り',
-                'overcast clouds': '曇り',
-                'light rain': '小雨',
-                'moderate rain': '雨',
-                'heavy intensity rain': '大雨',
-                'very heavy rain': '大雨',
-                'extreme rain': '豪雨',
-                'light intensity drizzle': '霧雨',
-                'drizzle': '霧雨',
-                'heavy intensity drizzle': '強い霧雨',
-                'thunderstorm': '雷雨',
-                'snow': '雪',
-                'light snow': '小雪',
-                'heavy snow': '大雪',
-                'mist': '霧',
-                'fog': '霧',
-                'haze': 'もや'
-            };
-            
-            return translations[description.toLowerCase()] || description;
         }
 
         // 初期化時にデータ取得開始通知を表示
-        async function initializeApp() {
+        function initializeApp() {
             loadSavedData();
             updateProgress();
             updateCurrentItem();
@@ -1869,22 +1703,14 @@
             startRealtimeUpdates();
             addEmergencyInfoSection();
             
-            // 天気予報追加（非同期）
-            addWeatherForecastToTimeline().catch(error => {
-                console.error('天気予報初期化エラー:', error);
-            });
-            
-            // 天気予報の自動更新を有効化
-            enableWeatherAutoUpdate();
-            
             // 初回データ取得完了通知
             setTimeout(() => {
                 showNotification('🚀 横浜旅行アプリ準備完了！', 'success');
                 
-                // インストールプロンプトは表示しない（無効化）
-                // setTimeout(() => {
-                //     showInstallPrompt();
-                // }, 3000);
+                // インストールプロンプトを表示
+                setTimeout(() => {
+                    showInstallPrompt();
+                }, 3000);
                 
                 // 開始スタンプ獲得チェック
                 if (!gameState.stamps.has('shibuya_start')) {
@@ -2050,16 +1876,84 @@
             }
         }
         
-        // インストールプロンプト表示（無効化）
+        // インストールプロンプト表示
         function showInstallPrompt() {
-            // インストールプロンプトは表示しない
-            return;
+            // 既にPWAモードまたはモバイルでない場合はスキップ
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                !window.matchMedia('(max-width: 768px)').matches) {
+                return;
+            }
+            
+            const installBanner = document.createElement('div');
+            installBanner.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 16px;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                z-index: 1002;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                animation: slideUpBanner 0.5s ease-out;
+            `;
+            
+            installBanner.innerHTML = `
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; margin-bottom: 4px;">📱 アプリとして追加</div>
+                    <div style="font-size: 14px; opacity: 0.9;">ホーム画面に追加してオフラインでも利用</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="installPWA()" style="
+                        background: rgba(255, 255, 255, 0.2);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 8px 16px;
+                        border-radius: 6px;
+                        font-size: 14px;
+                        cursor: pointer;
+                    ">追加</button>
+                    <button onclick="this.closest('div').remove()" style="
+                        background: none;
+                        border: none;
+                        color: white;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 4px;
+                    ">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(installBanner);
+            
+            // 15秒後に自動で消去
+            setTimeout(() => {
+                if (installBanner.parentNode) {
+                    installBanner.remove();
+                }
+            }, 15000);
         }
         
-        // PWAインストール実行（無効化）
+        // PWAインストール実行
         function installPWA() {
-            // インストール機能は無効化されています
-            return;
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWAインストール承認');
+                    } else {
+                        console.log('PWAインストール拒否');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                // フォールバック：手動インストールガイド
+                showManualInstallGuide();
+            }
         }
         
         // 手動インストールガイド
@@ -3082,46 +2976,34 @@
             const timelineItems = document.querySelectorAll('.timeline-item');
             
             timelineItems.forEach((item, index) => {
+                // 既にボタンが追加されている場合はスキップ
+                if (item.querySelector('.photo-actions')) return;
+                
                 const timelineCard = item.querySelector('.timeline-card');
                 const location = item.dataset.location || '不明';
                 
-                // 既存のアクションボタンを探す
-                let actionButtons = timelineCard.querySelector('.action-buttons');
-                if (!actionButtons) {
-                    // アクションボタンコンテナが無い場合は作成
-                    actionButtons = document.createElement('div');
-                    actionButtons.className = 'action-buttons';
-                    timelineCard.appendChild(actionButtons);
-                }
+                // 写真ボタンを作成
+                const photoActions = document.createElement('div');
+                photoActions.className = 'photo-actions';
+                photoActions.style.cssText = `
+                    margin-top: 12px;
+                    display: flex;
+                    gap: 6px;
+                    justify-content: center;
+                `;
                 
-                // 既に写真ボタンがある場合はスキップ
-                if (actionButtons.querySelector('.photo-btn') || actionButtons.querySelector('[onclick*="takePhoto"]')) return;
+                photoActions.innerHTML = `
+                    <button onclick="takePhoto(${index}, '${location}')" 
+                            style="padding: 6px 12px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                        📷 写真撮影
+                    </button>
+                    <button onclick="showPhotoGallery(${index})" 
+                            style="padding: 6px 12px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                        🖼️ ギャラリー
+                    </button>
+                `;
                 
-                // 写真撮影ボタンを追加
-                const photoButton = document.createElement('button');
-                photoButton.className = 'action-btn photo-btn';
-                photoButton.style.cssText = 'background: #9b59b6; color: white;';
-                photoButton.innerHTML = '📷 写真撮影';
-                photoButton.onclick = () => takePhoto(index, location);
-                
-                // ギャラリーボタンを追加
-                const galleryButton = document.createElement('button');
-                galleryButton.className = 'action-btn gallery-btn';
-                galleryButton.style.cssText = 'background: #8e44ad; color: white;';
-                galleryButton.innerHTML = '🖼️ ギャラリー';
-                galleryButton.onclick = () => showPhotoGallery(index);
-                
-                actionButtons.appendChild(photoButton);
-                actionButtons.appendChild(galleryButton);
-                
-                // 基本的な地図ボタンがない場合は追加
-                if (!actionButtons.querySelector('[onclick*="showMap"]')) {
-                    const mapButton = document.createElement('button');
-                    mapButton.className = 'action-btn map-btn';
-                    mapButton.innerHTML = '📍 地図';
-                    mapButton.onclick = () => showMap(location);
-                    actionButtons.insertBefore(mapButton, photoButton);
-                }
+                timelineCard.appendChild(photoActions);
             });
         }
         
@@ -4096,7 +3978,156 @@
             return mapping[locationKey] || null;
         }
         
-        // 設定ガイドの表示
+        // 歴史情報表示
+        function showHistoryInfo(locationName) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 500px; max-height: 80vh; overflow-y: auto; margin: 20px;
+            `;
+            
+            const historyData = getHistoryData(locationName);
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0; color: #8B4513;">🏛️ ${historyData.name}</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="line-height: 1.6;">
+                    <div style="background: #f8f4e6; padding: 12px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #8B4513;">
+                        <strong>${historyData.period}</strong>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin: 0 0 8px 0; color: #8B4513;">📖 歴史</h4>
+                        <p style="margin: 0; font-size: 14px;">${historyData.history}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h4 style="margin: 0 0 8px 0; color: #8B4513;">👁️ 見どころ</h4>
+                        <p style="margin: 0; font-size: 14px;">${historyData.highlights}</p>
+                    </div>
+                    
+                    ${historyData.tips ? `
+                        <div style="background: #e8f4fd; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                            <strong>💡 見学のコツ:</strong><br>
+                            <span style="font-size: 14px;">${historyData.tips}</span>
+                        </div>
+                    ` : ''}
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="${historyData.url}" target="_blank" style="
+                            display: inline-block; padding: 10px 20px; 
+                            background: #8B4513; color: white; text-decoration: none; 
+                            border-radius: 4px; font-size: 14px;
+                        ">詳細情報を見る</a>
+                    </div>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+        
+        // 歴史データ取得
+        function getHistoryData(locationName) {
+            const historyDatabase = {
+                '品川宿': {
+                    name: '品川宿（東海道五十三次第一宿）',
+                    period: '江戸時代前期〜明治時代（1601年〜）',
+                    history: '江戸から最初の宿場町として栄えた東海道の要所。参勤交代の大名や旅人で賑わい、飯屋・茶屋・旅籠が軒を連ねていました。',
+                    highlights: '現在も残る旧東海道の石畳や案内ゲート、品川宿交流館では当時の様子を展示。街道灯が宿場の面影を今に伝えています。',
+                    tips: '自転車で通過する際は、右手の白壁建物「品川宿交流館」と街道灯に注目してください。',
+                    url: 'https://www.gltjp.com/ja/directory/item/11086/'
+                },
+                '川崎宿跡': {
+                    name: '川崎宿跡',
+                    period: '江戸時代前期〜明治時代（1623年〜）',
+                    history: '東海道五十三次の2番目の宿場。多摩川の渡し場として重要な役割を果たし、川崎大師への参詣客でも賑わいました。',
+                    highlights: '行灯形の街灯と芭蕉句碑が特徴的。本陣跡は現在交差点となっていますが、説明板で当時を偲ぶことができます。',
+                    tips: '左歩道側の芭蕉句碑と、東海道川崎宿の行灯形街灯を探してみてください。',
+                    url: 'https://www.tabirai.net/localinfo/article/article-23188/'
+                },
+                '生麦事件碑': {
+                    name: '生麦事件碑',
+                    period: '幕末（1862年9月14日）',
+                    history: '薩摩藩主の父・島津久光の行列を横切ったイギリス人を薩摩藩士が殺傷した事件の現場。この事件が薩英戦争の引き金となりました。',
+                    highlights: '国道15号と旧東海道の交差点角に石碑が建立されており、幕末の激動を物語る重要な史跡です。',
+                    tips: '交差点の角なので、自転車で通過時は安全に配慮しながら数秒で確認できます。',
+                    url: 'https://trip.pref.kanagawa.jp/sc/destination/scene-of-the-namamugi-incident-and-monument/140'
+                },
+                '神奈川宿歴史の道': {
+                    name: '神奈川宿歴史の道',
+                    period: '江戸時代前期〜明治時代（1601年〜）',
+                    history: '東海道五十三次の3番目の宿場。ペリー来航後は外国人居留地としても発展し、開港場横浜の玄関口でした。',
+                    highlights: '坂道沿いの解説パネルと、袖ヶ浦の入江跡を見下ろす高台からの景観。当時の宿場町の様子が想像できます。',
+                    tips: '坂道なので、ゆっくりと登りながら街路樹の間の解説パネルを確認してください。',
+                    url: 'https://www.kanagawa-kankou.or.jp/features/tokaido-column515943'
+                },
+                '神奈川宿歴史の道案内板': {
+                    name: '神奈川宿"歴史の道"案内板',
+                    period: '江戸時代（1601年〜1868年）',
+                    history: '東海道で江戸から3番目の宿場町。坂道に本陣跡や宿場絵図パネルが設置され、江戸時代の宿場の様子を現代に伝えています。',
+                    highlights: '坂上のビル壁面に描かれた浮世絵レプリカと、詳細な宿場絵図パネルが見どころです。',
+                    tips: '坂道の台町坂沿いに複数の案内板があるので、安全な場所で一時停止して確認してください。',
+                    url: 'https://www.city.yokohama.lg.jp/kanagawa/shokai/rekishi/syuku.html'
+                },
+                '馬車道': {
+                    name: '馬車道（バシャミチ）',
+                    period: '明治時代初期（1866年〜）',
+                    history: '1866年に開削された日本初の「馬車が通る道」。横浜開港に伴い、外国人が馬車で関内と神奈川宿を結ぶために整備されました。',
+                    highlights: '石畳の路面と明治初期のガス灯のレプリカ、"Carriage Road"の銘板が当時の面影を残しています。',
+                    tips: '馬車道交差点付近で、路肩のガス灯レプリカと石畳に注目してください。',
+                    url: 'https://yokohamatravelguide.com/bashamichi-yokohamas-historic-gem/'
+                },
+                '横浜三塔': {
+                    name: '横浜三塔（King・Queen・Jack）',
+                    period: '大正〜昭和初期（1920年代〜1930年代）',
+                    history: '船乗りが横浜港への航路標識として利用した3つの塔。県庁（King）、税関（Queen）、開港記念会館（Jack）として親しまれています。',
+                    highlights: '県庁の帝冠様式、税関のイスラム風ドーム、開港記念会館の時計塔など、それぞれ異なる建築様式が楽しめます。',
+                    tips: 'みなとみらい方面に向かう際、3つの塔を同時に見渡せるポイントがあります。',
+                    url: 'https://www.yokohamajapan.com/things-to-do/detail.php?id=54'
+                },
+                '横浜赤レンガ倉庫': {
+                    name: '横浜赤レンガ倉庫',
+                    period: '明治末期〜大正初期（1911年・1913年竣工）',
+                    history: '明治政府が建設した税関倉庫。関東大震災でも倒壊しなかった耐震煉瓦構造で、横浜港の物流拠点として活躍しました。',
+                    highlights: '赤煉瓦の重厚な外観と、現在は文化・商業施設として生まれ変わった内部空間の調和が見どころです。',
+                    tips: '自転車で接近する際、煉瓦の質感と建物の迫力を間近で感じることができます。',
+                    url: 'https://en.wikipedia.org/wiki/Yokohama_Red_Brick_Warehouse'
+                },
+                '旧根岸競馬場': {
+                    name: '旧根岸競馬場一等観覧席跡',
+                    period: '明治初期（1866年開設）',
+                    history: '日本最古の洋式競馬場。外国人居留民により開設され、戦前まで「東洋一の競馬場」として親しまれました。戦後は米軍に接収されました。',
+                    highlights: '現在も残る白い石造の一等観覧席跡は、明治時代の洋式建築の貴重な遺構です。',
+                    tips: '国道357号から左前方の高台を見上げると、白い建物が確認できます。',
+                    url: 'https://offbeatjapan.com/negishi-racecourse-yokohama-story/'
+                }
+            };
+            
+            return historyDatabase[locationName] || {
+                name: locationName,
+                period: '詳細情報なし',
+                history: '申し訳ございませんが、この場所の詳細な歴史情報は現在準備中です。',
+                highlights: '現地での観察をお楽しみください。',
+                tips: '',
+                url: '#'
+            };
+        }
         function showSetupGuide() {
             const modal = document.createElement('div');
             modal.style.cssText = `
@@ -4886,30 +4917,6 @@
                 
                 const data = await response.json();
                 
-                // 時間別予報データを構築
-                const hourlyForecast = [];
-                const currentTime = new Date();
-                
-                for (let i = 0; i < Math.min(24, data.hourly.time.length); i++) {
-                    const forecastTime = new Date(data.hourly.time[i]);
-                    hourlyForecast.push({
-                        dt: forecastTime.getTime() / 1000,
-                        main: {
-                            temp: data.hourly.temperature_2m[i],
-                            humidity: 60 // 推定値
-                        },
-                        weather: [{
-                            main: getWeatherFromCode(data.hourly.weather_code[i]),
-                            description: getWeatherDescription(data.hourly.weather_code[i]),
-                            icon: getIconFromCode(data.hourly.weather_code[i])
-                        }],
-                        pop: data.hourly.precipitation_probability[i] / 100,
-                        wind: {
-                            speed: data.current_weather.windspeed / 3.6 // km/h to m/s
-                        }
-                    });
-                }
-                
                 return {
                     current: {
                         temp: Math.round(data.current_weather.temperature),
@@ -4923,13 +4930,16 @@
                             humidity: 60 // 推定値
                         },
                         wind: {
-                            speed: data.current_weather.windspeed / 3.6
+                            speed: data.current_weather.windspeed
                         }
                     },
                     location: '横浜市',
                     source: 'Open-Meteo',
                     forecast: {
-                        list: hourlyForecast
+                        list: data.hourly.time.slice(0, 8).map((time, index) => ({
+                            dt: new Date(time).getTime() / 1000,
+                            pop: data.hourly.precipitation_probability[index] / 100
+                        }))
                     }
                 };
                 
@@ -5020,70 +5030,18 @@
             }
         }
         
-        // 天気予報の手動更新
-        async function updateAllWeatherForecasts() {
-            const timelineItems = document.querySelectorAll('.timeline-item');
-            
-            for (let index = 0; index < timelineItems.length; index++) {
-                const item = timelineItems[index];
-                const weatherContainer = item.querySelector('.weather-container');
-                
-                if (weatherContainer) {
-                    const weatherForecast = weatherContainer.querySelector('.weather-forecast');
-                    
-                    if (weatherForecast) {
-                        try {
-                            // ローディング表示
-                            weatherForecast.innerHTML = `
-                                <div class="weather-icon">🔄</div>
-                                <div class="weather-temp">--°C</div>
-                                <div class="weather-desc">更新中...</div>
-                            `;
-                            
-                            const location = item.dataset.location || '不明';
-                            const weatherData = await getWeatherForLocation(location, index);
-                            
-                            // 天気予報を更新
-                            weatherForecast.innerHTML = `
-                                <div class="weather-icon">${weatherData.icon}</div>
-                                <div class="weather-temp">${weatherData.temp}°C</div>
-                                <div class="weather-desc">${weatherData.desc}</div>
-                                ${weatherData.time ? `<div class="weather-time" style="font-size: 9px; color: #666; margin-top: 2px;">${weatherData.time}</div>` : ''}
-                            `;
-                            
-                            // 少し遅延を入れてAPI負荷を軽減
-                            await new Promise(resolve => setTimeout(resolve, 200));
-                            
-                        } catch (error) {
-                            console.error(`天気予報更新エラー (${item.dataset.location}):`, error);
-                            
-                            weatherForecast.innerHTML = `
-                                <div class="weather-icon">❓</div>
-                                <div class="weather-temp">--°C</div>
-                                <div class="weather-desc">更新失敗</div>
-                            `;
-                        }
-                    }
-                }
-            }
-            
-            showNotification('天気予報を更新しました', 'success');
-        }
-
-        // 天気予報表示のリアルタイム更新機能を追加
-        function enableWeatherAutoUpdate() {
-            // 10分ごとに天気予報を自動更新
-            setInterval(async () => {
-                if (isOnline) {
-                    try {
-                        console.log('天気予報を自動更新中...');
-                        await updateAllWeatherForecasts();
-                        console.log('天気予報を自動更新しました');
-                    } catch (error) {
-                        console.error('天気予報自動更新エラー:', error);
-                    }
-                }
-            }, 600000); // 10分
+        // 天気コードから天気状態を取得
+        function getWeatherFromCode(code) {
+            const codeMap = {
+                0: 'Clear',
+                1: 'Clear', 2: 'Clouds', 3: 'Clouds',
+                45: 'Fog', 48: 'Fog',
+                51: 'Drizzle', 53: 'Drizzle', 55: 'Drizzle',
+                61: 'Rain', 63: 'Rain', 65: 'Rain',
+                80: 'Rain', 81: 'Rain', 82: 'Rain',
+                95: 'Thunderstorm', 96: 'Thunderstorm', 99: 'Thunderstorm'
+            };
+            return codeMap[code] || 'Clear';
         }
         
         // 天気コードから説明を取得
@@ -5193,9 +5151,100 @@
                 
                 // 天気アラートをチェック
                 checkWeatherAlerts(weatherData);
+                
+                // タイムラインアイテムにも天気情報を追加
+                addWeatherToTimelineItems(weatherData);
             } else {
                 fallbackWeatherDisplay();
             }
+        }
+        
+        // タイムラインアイテムに天気情報を追加
+        function addWeatherToTimelineItems(weatherData) {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach((item, index) => {
+                // 既存の天気情報を削除
+                const existingWeather = item.querySelector('.weather-info');
+                if (existingWeather) {
+                    existingWeather.remove();
+                }
+                
+                // 屋外活動のみに天気情報を表示
+                const isOutdoorActivity = isOutdoorLocation(item.dataset.location);
+                if (!isOutdoorActivity) return;
+                
+                const timelineCard = item.querySelector('.timeline-card');
+                const statusIndicator = item.querySelector('.status-indicator');
+                
+                // 天気情報要素を作成
+                const weatherInfo = document.createElement('div');
+                weatherInfo.className = 'weather-info';
+                
+                const current = weatherData.current;
+                const weatherIcon = getWeatherIcon(current.weather[0].icon);
+                const temp = Math.round(current.main.temp);
+                const desc = current.weather[0].description;
+                
+                weatherInfo.innerHTML = `
+                    <div class="weather-icon">${weatherIcon}</div>
+                    <div class="weather-details">
+                        <div class="weather-temp">${temp}°C</div>
+                        <div class="weather-desc">${desc}</div>
+                    </div>
+                `;
+                
+                // モバイル対応: ステータスインジケーターと天気情報をコンテナに配置
+                if (window.innerWidth <= 768) {
+                    let statusWeatherContainer = timelineCard.querySelector('.status-weather-container');
+                    if (!statusWeatherContainer) {
+                        statusWeatherContainer = document.createElement('div');
+                        statusWeatherContainer.className = 'status-weather-container';
+                        
+                        // ステータスインジケーターをコンテナに移動
+                        if (statusIndicator) {
+                            statusIndicator.remove();
+                            statusWeatherContainer.appendChild(statusIndicator);
+                        }
+                        
+                        // 時間要素の後に挿入
+                        const timeElement = timelineCard.querySelector('.time');
+                        if (timeElement) {
+                            timeElement.insertAdjacentElement('afterend', statusWeatherContainer);
+                        } else {
+                            timelineCard.insertBefore(statusWeatherContainer, timelineCard.firstChild);
+                        }
+                    }
+                    
+                    statusWeatherContainer.appendChild(weatherInfo);
+                } else {
+                    // デスクトップ: 絶対位置での配置
+                    timelineCard.appendChild(weatherInfo);
+                }
+            });
+        }
+        
+        // 屋外活動かどうかを判定
+        function isOutdoorLocation(location) {
+            const outdoorKeywords = [
+                '市場', '商店街', 'マルシェ', '倉庫', '駅', '六角橋', 
+                '赤レンガ', '北仲', '白楽', '杉田', '渋谷', '横浜',
+                '自転車', 'サイクリング', 'CYCLING'
+            ];
+            
+            const indoorKeywords = [
+                'ラーメン', '店', '食事', '末廣家', '杉田家'
+            ];
+            
+            if (!location) return false;
+            
+            // 屋内のキーワードが含まれている場合は屋内と判定
+            if (indoorKeywords.some(keyword => location.includes(keyword))) {
+                return false;
+            }
+            
+            // 屋外のキーワードが含まれている場合は屋外と判定
+            return outdoorKeywords.some(keyword => location.includes(keyword));
         }
         
         function getWeatherIcon(iconCode) {
@@ -5273,6 +5322,15 @@
                     🔄 再試行
                 </button>
             `;
+            
+            // タイムラインアイテムから天気情報を削除
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => {
+                const weatherInfo = item.querySelector('.weather-info');
+                if (weatherInfo) {
+                    weatherInfo.remove();
+                }
+            });
         }
 
         async function updateWeather() {
