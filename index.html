@@ -125,16 +125,6 @@
             background: var(--accent-color);
         }
 
-        /* Historical site markers */
-        .timeline-item.historical::before {
-            background: linear-gradient(135deg, #8B4513, #D2691E);
-            border: 4px solid var(--card-background);
-        }
-
-        .timeline-item.historical .activity {
-            color: #8B4513;
-        }
-
         /* Timeline card */
         .timeline-card {
             background: var(--card-background);
@@ -593,6 +583,95 @@
             line-height: 1.5;
         }
 
+        /* Historical Content Modal */
+        .history-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-modal.active {
+            display: flex;
+        }
+
+        .history-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8B4513;
+        }
+
+        .history-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .history-close:hover {
+            color: #e74c3c;
+        }
+
+        .history-content {
+            line-height: 1.6;
+        }
+
+        .history-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #8B4513;
+            border-radius: 4px;
+        }
+
+        .history-item h4 {
+            color: #8B4513;
+            margin: 0 0 8px 0;
+            font-size: 1.1em;
+        }
+
+        .history-item .year {
+            color: #6c757d;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .history-item .description {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .history-item .link {
+            color: #8B4513;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .history-item .link:hover {
+            text-decoration: underline;
+        }
+
         /* Timeline enhancements */
         .timeline-item {
             position: relative;
@@ -670,6 +749,15 @@
 
         .action-btn.info-btn:hover {
             background: #d68910;
+        }
+
+        .action-btn.history-btn {
+            background: linear-gradient(135deg, #8B4513, #D2691E);
+            color: white;
+        }
+
+        .action-btn.history-btn:hover {
+            background: linear-gradient(135deg, #A0522D, #F4A460);
         }
 
         /* Status indicators */
@@ -967,93 +1055,14 @@
                         <button class="action-btn info-btn" onclick="showTrafficInfo()">
                             🚦 交通情報
                         </button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット1 -->
-            <article class="timeline-item historical" data-location="品川宿">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="07:20">07:20</time>
-                    <h2 class="activity">🏛️ 品川宿（東海道一番目の宿場）</h2>
-                    <div class="description">
-                        アーチ形の"旧東海道"案内ゲートと街道灯が並ぶ宿場跡。道沿い右手に「品川宿交流館 本宿お休み処」の白壁が見える。<br>
-                        <a href="https://www.gltjp.com/ja/directory/item/11086/" target="_blank" rel="noopener noreferrer">好運日本行 - 旧東海道 品川宿</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('品川宿')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('品川宿')">
-                            🏛️ 歴史詳細
+                        <button class="action-btn history-btn" onclick="showHistoryRoute('route1')">
+                            🏛️ 歴史スポット
                         </button>
                     </div>
                 </div>
             </article>
 
-            <!-- 歴史スポット2 -->
-            <article class="timeline-item historical" data-location="川崎宿跡">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="07:50">07:50</time>
-                    <h2 class="activity">🏛️ 川崎宿跡</h2>
-                    <div class="description">
-                        「東海道川崎宿」の行灯形街灯と芭蕉句碑（左歩道側）。本陣跡は交差点に説明板のみ残存。<br>
-                        <a href="https://www.tabirai.net/localinfo/article/article-23188/" target="_blank" rel="noopener noreferrer">たびらい - 川崎の旧東海道</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('川崎宿跡')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('川崎宿跡')">
-                            🏛️ 歴史詳細
-                        </button>
-                    </div>
-                </div>
-            </article>
 
-            <!-- 歴史スポット3 -->
-            <article class="timeline-item historical" data-location="生麦事件碑">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="08:10">08:10</time>
-                    <h2 class="activity">🏛️ 生麦事件碑</h2>
-                    <div class="description">
-                        国道15号と旧東海道が交わる角の石碑。薩英戦争の発端となった事件を伝える。歩道から数秒で視認可能。<br>
-                        <a href="https://trip.pref.kanagawa.jp/sc/destination/scene-of-the-namamugi-incident-and-monument/140" target="_blank" rel="noopener noreferrer">神奈川県観光 - 生麦事件碑</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('生麦事件碑')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('生麦事件碑')">
-                            🏛️ 歴史詳細
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット4 -->
-            <article class="timeline-item historical" data-location="神奈川宿歴史の道">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="08:25">08:25</time>
-                    <h2 class="activity">🏛️ 神奈川宿歴史の道</h2>
-                    <div class="description">
-                        街路樹が並ぶ坂道沿いに宿場解説パネル。「袖ヶ浦」の入江跡を見下ろす少し高台の景観。<br>
-                        <a href="https://www.kanagawa-kankou.or.jp/features/tokaido-column515943" target="_blank" rel="noopener noreferrer">神奈川県観光協会 - 旧東海道 神奈川宿</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('神奈川宿歴史の道')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('神奈川宿歴史の道')">
-                            🏛️ 歴史詳細
-                        </button>
-                    </div>
-                </div>
-            </article>
 
             <!-- イベント1 -->
             <article class="timeline-item event" data-location="水産仲卸棟">
@@ -1091,27 +1100,6 @@
                         <a href="https://maps.google.com/maps/dir/横浜市中央卸売市場/六角橋商店街" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット5 -->
-            <article class="timeline-item historical" data-location="神奈川宿歴史の道案内板">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="09:55">09:55頃</time>
-                    <h2 class="activity">🏛️ 神奈川宿"歴史の道"案内板</h2>
-                    <div class="description">
-                        江戸から３番目の宿場。坂道沿いに旧本陣跡や宿場絵図パネルが立つ。坂上のビル壁面に浮世絵レプリカ。<br>
-                        <a href="https://www.city.yokohama.lg.jp/kanagawa/shokai/rekishi/syuku.html" target="_blank" rel="noopener noreferrer">横浜市公式サイト - 神奈川宿歴史の道</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('神奈川宿歴史の道案内板')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('神奈川宿歴史の道案内板')">
-                            🏛️ 歴史詳細
-                        </button>
                     </div>
                 </div>
             </article>
@@ -1173,47 +1161,8 @@
                         <a href="https://maps.google.com/maps/dir/六角橋/北仲ブリック＆ホワイト" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット6 -->
-            <article class="timeline-item historical" data-location="馬車道">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="11:55">11:55頃</time>
-                    <h2 class="activity">🏛️ 馬車道（バシャミチ）石畳とガス灯</h2>
-                    <div class="description">
-                        1866年に開削された「馬車が通る道」。路肩には明治初のガス灯レプリカと"Carriage Road"銘板。<br>
-                        <a href="https://yokohamatravelguide.com/bashamichi-yokohamas-historic-gem/" target="_blank" rel="noopener noreferrer">Yokohama Travel Guide - Bashamichi</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('馬車道')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('馬車道')">
-                            🏛️ 歴史詳細
-                        </button>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット7 -->
-            <article class="timeline-item historical" data-location="横浜三塔">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="12:05/12:10">12:05–12:10</time>
-                    <h2 class="activity">🏛️ 横浜三塔 King・Queen・Jack</h2>
-                    <div class="description">
-                        1920年代〜1930年代竣工。塔の愛称は船乗りが航路標識にした伝承に由来。県庁（King）は帝冠様式、税関（Queen）はイスラム風ドームが特徴。<br>
-                        <a href="https://www.yokohamajapan.com/things-to-do/detail.php?id=54" target="_blank" rel="noopener noreferrer">横浜ジャパン - King's Tower</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('横浜三塔')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('横浜三塔')">
-                            🏛️ 歴史詳細
+                        <button class="action-btn history-btn" onclick="showHistoryRoute('route2')">
+                            🏛️ 歴史スポット
                         </button>
                     </div>
                 </div>
@@ -1255,26 +1204,8 @@
                         <a href="https://maps.google.com/maps/dir/北仲/赤レンガ倉庫" target="_blank" class="action-btn directions-btn">
                             🚴 自転車ルート
                         </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- 歴史スポット8 -->
-            <article class="timeline-item historical" data-location="横浜赤レンガ倉庫">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">到着</div>
-                    <time class="time" datetime="14:05/14:15">14:05–14:15</time>
-                    <h2 class="activity">🏛️ 横浜赤レンガ倉庫（1911/1913）</h2>
-                    <div class="description">
-                        明治後期に建てられた煉瓦造りの旧税関倉庫。関東大震災後も残った耐震煉瓦の迫力をサドル越しに一望。<br>
-                        <a href="https://en.wikipedia.org/wiki/Yokohama_Red_Brick_Warehouse" target="_blank" rel="noopener noreferrer">Wikipedia - 横浜赤レンガ倉庫</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('横浜赤レンガ倉庫')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('横浜赤レンガ倉庫')">
-                            🏛️ 歴史詳細
+                        <button class="action-btn history-btn" onclick="showHistoryRoute('route3')">
+                            🏛️ 歴史スポット
                         </button>
                     </div>
                 </div>
@@ -1322,25 +1253,7 @@
             </article>
 
             <!-- 歴史スポット9 -->
-            <article class="timeline-item historical" data-location="旧根岸競馬場">
-                <div class="timeline-card">
-                    <div class="status-indicator upcoming">通過</div>
-                    <time class="time" datetime="15:25">15:25頃</time>
-                    <h2 class="activity">🏛️ 旧根岸競馬場一等観覧席跡（1866）</h2>
-                    <div class="description">
-                        日本最古の洋式競馬場スタンド遺構。国道357号から左前方高台に白い石造建築が見える。<br>
-                        <a href="https://offbeatjapan.com/negishi-racecourse-yokohama-story/" target="_blank" rel="noopener noreferrer">Offbeat Japan - Negishi Racecourse</a>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="action-btn map-btn" onclick="showMap('旧根岸競馬場')">
-                            📍 地図
-                        </button>
-                        <button class="action-btn info-btn" onclick="showHistoryInfo('旧根岸競馬場')">
-                            🏛️ 歴史詳細
-                        </button>
-                    </div>
-                </div>
-            </article>
+            <!-- 旧根岸競馬場は歴史スポットボタンから参照 -->
 
             <!-- 返却 -->
             <article class="timeline-item" data-location="新杉田駅第四自転車駐車場">
@@ -1505,6 +1418,19 @@
                         </ul>
                         <p><small>実際の実装では、Google Maps APIやMapbox APIを使用して<br>インタラクティブな地図を表示できます。</small></p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Modal -->
+        <div class="history-modal" id="historyModal">
+            <div class="history-container">
+                <div class="history-header">
+                    <h3 id="historyTitle">🏛️ 歴史スポット</h3>
+                    <button class="history-close" onclick="closeHistory()">&times;</button>
+                </div>
+                <div class="history-content" id="historyContent">
+                    <!-- 歴史コンテンツがここに表示されます -->
                 </div>
             </div>
         </div>
@@ -5434,6 +5360,115 @@
 
         function closeMap() {
             const modal = document.getElementById('mapModal');
+            modal.classList.remove('active');
+        }
+
+        // 歴史スポット表示機能
+        function showHistoryRoute(routeId) {
+            const modal = document.getElementById('historyModal');
+            const title = document.getElementById('historyTitle');
+            const content = document.getElementById('historyContent');
+            
+            const historyData = {
+                'route1': {
+                    title: '渋谷→横浜中央卸売市場ルート',
+                    items: [
+                        {
+                            name: '東海道',
+                            year: '江戸時代（1603-1868）',
+                            description: '国道246号線は江戸時代の東海道の一部です。現在のルートは大山街道（矢倉沢往還）として使われていました。',
+                            link: 'https://ja.wikipedia.org/wiki/大山街道'
+                        },
+                        {
+                            name: '神奈川宿',
+                            year: '1601年設置',
+                            description: '東海道五十三次の3番目の宿場。現在の横浜駅周辺にあたります。',
+                            link: 'https://ja.wikipedia.org/wiki/神奈川宿'
+                        },
+                        {
+                            name: '横浜開港',
+                            year: '1859年（安政6年）',
+                            description: '日米修好通商条約により横浜港が開港。現在の中華街・関内エリアが発展の始まりです。',
+                            link: 'https://ja.wikipedia.org/wiki/横浜開港'
+                        }
+                    ]
+                },
+                'route2': {
+                    title: '六角橋→みなとみらいルート',
+                    items: [
+                        {
+                            name: '六角橋',
+                            year: '1889年（明治22年）',
+                            description: '六角形の橋があったことから命名。現在の商店街は戦後復興期に形成されました。',
+                            link: 'https://ja.wikipedia.org/wiki/六角橋'
+                        },
+                        {
+                            name: 'みなとみらい21',
+                            year: '1983年着工',
+                            description: '横浜の臨海部を埋め立てて作られた新都心。元々は三菱重工業横浜造船所があった場所です。',
+                            link: 'https://ja.wikipedia.org/wiki/みなとみらい21'
+                        },
+                        {
+                            name: '赤レンガ倉庫',
+                            year: '1911年（明治44年）',
+                            description: '明治末期に建設された保税倉庫。現在は文化・商業施設として活用されています。',
+                            link: 'https://ja.wikipedia.org/wiki/横浜赤レンガ倉庫'
+                        }
+                    ]
+                },
+                'route3': {
+                    title: '赤レンガ倉庫→新杉田ルート',
+                    items: [
+                        {
+                            name: '旧根岸競馬場',
+                            year: '1866年（慶応2年）',
+                            description: '日本初の洋式競馬場として外国人居留地に建設。現在は一等観覧席跡が残っています。',
+                            link: 'https://ja.wikipedia.org/wiki/根岸競馬場'
+                        },
+                        {
+                            name: '杉田',
+                            year: '鎌倉時代〜',
+                            description: '古くから東海道の要衝として栄えた宿場町。杉田梅で有名でした。',
+                            link: 'https://ja.wikipedia.org/wiki/杉田_(横浜市)'
+                        },
+                        {
+                            name: '根岸湾',
+                            year: '江戸時代',
+                            description: '江戸時代は風光明媚な景勝地として知られ、多くの文人墨客が訪れました。',
+                            link: 'https://ja.wikipedia.org/wiki/根岸湾'
+                        }
+                    ]
+                }
+            };
+
+            const routeData = historyData[routeId];
+            if (!routeData) return;
+
+            title.textContent = `🏛️ ${routeData.title}の歴史`;
+            
+            let contentHTML = '<div>';
+            routeData.items.forEach(item => {
+                contentHTML += `
+                    <div class="history-item">
+                        <h4>${item.name}</h4>
+                        <div class="year">${item.year}</div>
+                        <div class="description">${item.description}</div>
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="link">
+                            詳細を見る →
+                        </a>
+                    </div>
+                `;
+            });
+            contentHTML += '</div>';
+            
+            content.innerHTML = contentHTML;
+            modal.classList.add('active');
+            
+            showNotification(`${routeData.title}の歴史を表示中`, 'info');
+        }
+
+        function closeHistory() {
+            const modal = document.getElementById('historyModal');
             modal.classList.remove('active');
         }
 
