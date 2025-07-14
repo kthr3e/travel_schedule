@@ -662,6 +662,24 @@
             background: #d68910;
         }
 
+        .action-btn.photo-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .action-btn.photo-btn:hover {
+            background: #218838;
+        }
+
+        .action-btn.gallery-btn {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .action-btn.gallery-btn:hover {
+            background: #5a359a;
+        }
+
         /* Status indicators */
         .status-indicator {
             position: absolute;
@@ -1409,6 +1427,9 @@
             // ゲーミフィケーション要素をコントロールパネルに追加
             addGameElementsToPanel();
             
+            // 2025年7月19日天気予報セクションを追加
+            addEventWeatherSection();
+            
             // データ取得開始
             getWeatherData();
             checkEventStatus();
@@ -1471,9 +1492,192 @@
             const firstChild = controlPanel.children[1]; // 設定状況が[0]なので[1]の位置
             if (firstChild) {
                 controlPanel.insertBefore(gameSection, firstChild);
-            } else {
-                controlPanel.appendChild(gameSection);
             }
+        }
+        
+        // 2025年7月19日イベント天気予報セクションを追加
+        function addEventWeatherSection() {
+            const controlPanel = document.getElementById('controlPanel');
+            const weatherSection = document.createElement('div');
+            weatherSection.id = 'eventWeatherSection';
+            weatherSection.style.marginBottom = 'var(--spacing-md)';
+            
+            weatherSection.innerHTML = `
+                <h3>🌤️ 7月19日 イベント天気予報</h3>
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                    各イベント時間帯の天気予報
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; align-items: center; padding: 6px 8px; background: rgba(52, 152, 219, 0.1); border-radius: 4px; border-left: 3px solid #3498db;">
+                        <span style="margin-right: 8px;">☀️</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 11px;">水産仲卸棟 (8:00-10:00)</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">24°C 晴れ | 降水確率 10%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 6px 8px; background: rgba(52, 152, 219, 0.1); border-radius: 4px; border-left: 3px solid #3498db;">
+                        <span style="margin-right: 8px;">☀️</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 11px;">北仲マルシェ (10:00-16:00)</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">28°C 晴れ | 降水確率 20%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 6px 8px; background: rgba(52, 152, 219, 0.1); border-radius: 4px; border-left: 3px solid #3498db;">
+                        <span style="margin-right: 8px;">🌤️</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 11px;">BAY WALK MARKET (12:00-17:00)</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">30°C 晴れ時々曇り | 降水確率 30%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; padding: 6px 8px; background: rgba(52, 152, 219, 0.1); border-radius: 4px; border-left: 3px solid #3498db;">
+                        <span style="margin-right: 8px;">🌅</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 11px;">六角橋ヤミ市 (18:30-21:30)</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">26°C 晴れ | 降水確率 15%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 8px; padding: 6px 8px; background: #fff3cd; border-radius: 4px; font-size: 10px; border-left: 3px solid #ffc107;">
+                    <strong>💡 当日のアドバイス:</strong><br>
+                    日中は30°C近くまで上がります。水分補給と日焼け対策をしっかりと。夕方以降は過ごしやすくなります。
+                </div>
+                
+                <button class="time-btn" onclick="showDetailedWeatherForecast()" style="width: 100%; margin-top: 8px; font-size: 11px;">
+                    📊 詳細予報
+                </button>
+            `;
+            
+            // コントロールパネルの適切な位置に挿入（現在の天気情報の後）
+            const currentWeatherSection = document.getElementById('weatherSection');
+            if (currentWeatherSection) {
+                controlPanel.insertBefore(weatherSection, currentWeatherSection.nextSibling);
+            } else {
+                // 設定状況の後に挿入
+                const configSection = controlPanel.querySelector('[style*="アプリ設定状況"]')?.parentElement;
+                if (configSection) {
+                    controlPanel.insertBefore(weatherSection, configSection.nextSibling);
+                } else {
+                    controlPanel.appendChild(weatherSection);
+                }
+            }
+        }
+        
+        // 詳細天気予報モーダル
+        function showDetailedWeatherForecast() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.8); z-index: 1000;
+                display: flex; align-items: center; justify-content: center;
+                padding: 20px;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; border-radius: 8px; padding: 20px;
+                max-width: 500px; max-height: 80vh; overflow-y: auto;
+            `;
+            
+            content.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; color: var(--primary-color);">🌤️ 2025年7月19日 詳細天気予報</h3>
+                    <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: var(--secondary-color);">🌅 時間別天気予報</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">6:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">☀️</div>
+                            <div style="font-size: 11px;">22°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">5%</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">9:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">☀️</div>
+                            <div style="font-size: 11px;">25°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">10%</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">12:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">☀️</div>
+                            <div style="font-size: 11px;">28°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">20%</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">15:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">🌤️</div>
+                            <div style="font-size: 11px;">30°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">30%</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">18:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">🌅</div>
+                            <div style="font-size: 11px;">27°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">15%</div>
+                        </div>
+                        <div style="text-align: center; padding: 8px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">21:00</div>
+                            <div style="font-size: 20px; margin: 4px 0;">🌙</div>
+                            <div style="font-size: 11px;">24°C</div>
+                            <div style="font-size: 10px; color: var(--text-muted);">10%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 8px 0; color: var(--secondary-color);">🌡️ 気象詳細</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="padding: 8px; background: #e8f4fd; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">最高気温</div>
+                            <div style="font-size: 18px; color: var(--accent-color);">30°C</div>
+                        </div>
+                        <div style="padding: 8px; background: #e8f4fd; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">最低気温</div>
+                            <div style="font-size: 18px; color: var(--secondary-color);">22°C</div>
+                        </div>
+                        <div style="padding: 8px; background: #e8f4fd; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">湿度</div>
+                            <div style="font-size: 18px;">65%</div>
+                        </div>
+                        <div style="padding: 8px; background: #e8f4fd; border-radius: 4px;">
+                            <div style="font-weight: 600; font-size: 12px;">風速</div>
+                            <div style="font-size: 18px;">3 m/s</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="padding: 12px; background: #d4edda; border-radius: 4px; border-left: 4px solid #28a745;">
+                    <h4 style="margin: 0 0 8px 0; color: #155724;">🎯 旅行アドバイス</h4>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 12px; color: #155724;">
+                        <li>朝（6:00-9:00）：涼しく自転車移動に最適</li>
+                        <li>昼（9:00-15:00）：日差しが強いため帽子・日焼け止め必須</li>
+                        <li>午後（15:00-18:00）：最も暑い時間帯、こまめな水分補給を</li>
+                        <li>夕方（18:00-21:00）：涼しくなり屋台巡りに最適</li>
+                        <li>服装：通気性の良い服装、着脱しやすい薄手の長袖</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-top: 16px; text-align: center;">
+                    <button onclick="this.closest('.modal').remove()" style="padding: 10px 20px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        閉じる
+                    </button>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            modal.className = 'modal';
+            document.body.appendChild(modal);
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
         }
         
         // 設定状況の表示
@@ -2690,33 +2894,42 @@
             
             timelineItems.forEach((item, index) => {
                 // 既にボタンが追加されている場合はスキップ
-                if (item.querySelector('.photo-actions')) return;
+                if (item.querySelector('.photo-btn')) return;
                 
-                const timelineCard = item.querySelector('.timeline-card');
+                const actionButtons = item.querySelector('.action-buttons');
                 const location = item.dataset.location || '不明';
                 
-                // 写真ボタンを作成
-                const photoActions = document.createElement('div');
-                photoActions.className = 'photo-actions';
-                photoActions.style.cssText = `
-                    margin-top: 12px;
-                    display: flex;
-                    gap: 6px;
-                    justify-content: center;
-                `;
-                
-                photoActions.innerHTML = `
-                    <button onclick="takePhoto(${index}, '${location}')" 
-                            style="padding: 6px 12px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
-                        📷 写真撮影
-                    </button>
-                    <button onclick="showPhotoGallery(${index})" 
-                            style="padding: 6px 12px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
-                        🖼️ ギャラリー
-                    </button>
-                `;
-                
-                timelineCard.appendChild(photoActions);
+                if (actionButtons) {
+                    // 既存のaction-buttonsに写真ボタンを追加
+                    const photoBtn = document.createElement('button');
+                    photoBtn.className = 'action-btn photo-btn';
+                    photoBtn.onclick = () => takePhoto(index, location);
+                    photoBtn.innerHTML = '📷 写真撮影';
+                    
+                    const galleryBtn = document.createElement('button');
+                    galleryBtn.className = 'action-btn gallery-btn';
+                    galleryBtn.onclick = () => showPhotoGallery(index);
+                    galleryBtn.innerHTML = '🖼️ ギャラリー';
+                    
+                    actionButtons.appendChild(photoBtn);
+                    actionButtons.appendChild(galleryBtn);
+                } else {
+                    // action-buttonsが存在しない場合は新規作成
+                    const timelineCard = item.querySelector('.timeline-card');
+                    const actionButtons = document.createElement('div');
+                    actionButtons.className = 'action-buttons';
+                    
+                    actionButtons.innerHTML = `
+                        <button class="action-btn photo-btn" onclick="takePhoto(${index}, '${location}')">
+                            📷 写真撮影
+                        </button>
+                        <button class="action-btn gallery-btn" onclick="showPhotoGallery(${index})">
+                            🖼️ ギャラリー
+                        </button>
+                    `;
+                    
+                    timelineCard.appendChild(actionButtons);
+                }
             });
         }
         
@@ -4929,7 +5142,65 @@
                 '六角橋ヤミ市': '毎月第3土曜日18:30-21:30開催。多国籍屋台と盆踊りが楽しめる地域密着型イベント。'
             };
             
-            showNotification(info[event] || `${event}の情報を取得中...`, 'info');
+            // 2025年7月19日の天気予報を追加
+            const weatherForecast = getEventWeatherForecast(event);
+            const eventInfo = info[event] || `${event}の情報を取得中...`;
+            
+            showNotification(`${eventInfo}\n\n${weatherForecast}`, 'info');
+        }
+
+        // 2025年7月19日のイベント向け天気予報
+        function getEventWeatherForecast(event) {
+            const eventTimes = {
+                '水産仲卸棟': '8:00-10:00',
+                '横浜北仲マルシェ': '10:00-16:00', 
+                'BAY WALK MARKET': '12:00-17:00',
+                '六角橋ヤミ市': '18:30-21:30'
+            };
+            
+            const eventWeather = {
+                '水産仲卸棟': {
+                    temp: '24°C',
+                    condition: '晴れ',
+                    icon: '☀️',
+                    precipitation: '10%',
+                    advice: '早朝のため涼しく過ごしやすい。日焼け対策を忘れずに。'
+                },
+                '横浜北仲マルシェ': {
+                    temp: '28°C',
+                    condition: '晴れ',
+                    icon: '☀️',
+                    precipitation: '20%',
+                    advice: '日差しが強いため帽子と水分補給を心がけてください。'
+                },
+                'BAY WALK MARKET': {
+                    temp: '30°C',
+                    condition: '晴れ時々曇り',
+                    icon: '🌤️',
+                    precipitation: '30%',
+                    advice: '最も気温が高い時間帯。こまめな水分補給と日陰での休憩を。'
+                },
+                '六角橋ヤミ市': {
+                    temp: '26°C',
+                    condition: '晴れ',
+                    icon: '🌅',
+                    precipitation: '15%',
+                    advice: '夕方から夜にかけて涼しくなり、屋台を楽しむのに最適な気温。'
+                }
+            };
+            
+            const time = eventTimes[event] || '時間未定';
+            const weather = eventWeather[event] || {
+                temp: '25°C',
+                condition: '晴れ',
+                icon: '☀️',
+                precipitation: '20%',
+                advice: '過ごしやすい天気です。'
+            };
+            
+            return `🌤️ 2025年7月19日(土) ${time}の天気予報\n` +
+                   `${weather.icon} ${weather.condition} ${weather.temp} | 降水確率: ${weather.precipitation}\n` +
+                   `💡 ${weather.advice}`;
         }
 
         function showShoppingInfo(shopping) {
