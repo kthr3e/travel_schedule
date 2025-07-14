@@ -833,6 +833,13 @@
             text-overflow: ellipsis;
         }
 
+        .weather-info .weather-rain {
+            color: #007bff;
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 600;
+        }
+
         /* モバイル対応での調整 */
         @media (max-width: 768px) {
             .weather-info {
@@ -4836,35 +4843,64 @@
                 const lat = 35.4478;
                 const lon = 139.6425;
                 
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Asia/Tokyo&forecast_days=1`;
+                // 2025年7月19日の日付文字列
+                const targetDate = '2025-07-19';
+                
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code,relative_humidity_2m,wind_speed_10m&timezone=Asia/Tokyo&start_date=${targetDate}&end_date=${targetDate}`;
                 
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Open-Meteo API失敗');
                 
                 const data = await response.json();
                 
+                // 時刻別の天気データを作成
+                const hourlyData = data.hourly.time.map((time, index) => ({
+                    dt: new Date(time).getTime() / 1000,
+                    time: time,
+                    temp: Math.round(data.hourly.temperature_2m[index]),
+                    humidity: data.hourly.relative_humidity_2m[index],
+                    windSpeed: data.hourly.wind_speed_10m[index],
+                    precipitation: data.hourly.precipitation_probability[index],
+                    weatherCode: data.hourly.weather_code[index],
+                    weather: [{
+                        main: getWeatherFromCode(data.hourly.weather_code[index]),
+                        description: getWeatherDescription(data.hourly.weather_code[index]),
+                        icon: getIconFromCode(data.hourly.weather_code[index])
+                    }]
+                }));
+                
+                // 現在時刻に最も近い時間の天気を「現在の天気」として使用
+                const currentHour = new Date().getHours();
+                const currentData = hourlyData.find(h => new Date(h.time).getHours() === currentHour) || hourlyData[0];
+                
                 return {
                     current: {
-                        temp: Math.round(data.current_weather.temperature),
-                        weather: [{
-                            main: getWeatherFromCode(data.current_weather.weathercode),
-                            description: getWeatherDescription(data.current_weather.weathercode),
-                            icon: getIconFromCode(data.current_weather.weathercode)
-                        }],
+                        temp: currentData.temp,
+                        weather: currentData.weather,
                         main: {
-                            temp: data.current_weather.temperature,
-                            humidity: 60 // 推定値
+                            temp: currentData.temp,
+                            humidity: currentData.humidity || 60
                         },
                         wind: {
-                            speed: data.current_weather.windspeed
+                            speed: currentData.windSpeed || 0
                         }
                     },
                     location: '横浜市',
                     source: 'Open-Meteo',
+                    targetDate: targetDate,
+                    hourlyData: hourlyData,
                     forecast: {
-                        list: data.hourly.time.slice(0, 8).map((time, index) => ({
-                            dt: new Date(time).getTime() / 1000,
-                            pop: data.hourly.precipitation_probability[index] / 100
+                        list: hourlyData.map(h => ({
+                            dt: h.dt,
+                            pop: h.precipitation / 100,
+                            main: {
+                                temp: h.temp,
+                                humidity: h.humidity
+                            },
+                            weather: h.weather,
+                            wind: {
+                                speed: h.windSpeed
+                            }
                         }))
                     }
                 };
@@ -4878,36 +4914,70 @@
         // wttr.in API（テキストベース）
         async function getWttrWeather() {
             try {
-                const url = 'https://wttr.in/横浜?format=j1';
+                // 2025年7月19日の天気予報を取得
+                const url = 'https://wttr.in/横浜?format=j1&date=2025-07-19';
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('wttr.in API失敗');
                 
                 const data = await response.json();
-                const current = data.current_condition[0];
-                const today = data.weather[0];
+                
+                // 当日の天気データを取得
+                const today = data.weather && data.weather[0];
+                if (!today) throw new Error('当日の天気データが見つかりません');
+                
+                const current = data.current_condition ? data.current_condition[0] : null;
+                
+                // 時刻別データを作成
+                const hourlyData = today.hourly.map((hour, index) => {
+                    const hourTime = new Date(2025, 6, 19, index * 3, 0); // 3時間ごと
+                    return {
+                        dt: hourTime.getTime() / 1000,
+                        time: hourTime.toISOString(),
+                        temp: parseInt(hour.tempC),
+                        humidity: parseInt(hour.humidity),
+                        windSpeed: parseInt(hour.windspeedKmph) / 3.6,
+                        precipitation: parseInt(hour.chanceofrain),
+                        weatherCode: hour.weatherCode,
+                        weather: [{
+                            main: hour.weatherDesc[0].value,
+                            description: hour.weatherDesc[0].value,
+                            icon: mapWttrIcon(hour.weatherCode)
+                        }]
+                    };
+                });
+                
+                // 現在時刻に最も近い時間のデータを使用
+                const currentHour = new Date().getHours();
+                const currentData = hourlyData.find(h => new Date(h.time).getHours() === currentHour) || hourlyData[0];
                 
                 return {
                     current: {
-                        temp: parseInt(current.temp_C),
-                        weather: [{
-                            main: current.weatherDesc[0].value,
-                            description: current.weatherDesc[0].value,
-                            icon: mapWttrIcon(current.weatherCode)
-                        }],
+                        temp: currentData.temp,
+                        weather: currentData.weather,
                         main: {
-                            temp: parseInt(current.temp_C),
-                            humidity: parseInt(current.humidity)
+                            temp: currentData.temp,
+                            humidity: currentData.humidity
                         },
                         wind: {
-                            speed: parseInt(current.windspeedKmph) / 3.6 // km/h to m/s
+                            speed: currentData.windSpeed
                         }
                     },
                     location: '横浜市',
                     source: 'wttr.in',
+                    targetDate: '2025-07-19',
+                    hourlyData: hourlyData,
                     forecast: {
-                        list: today.hourly.slice(0, 8).map((hour, index) => ({
-                            dt: Date.now() / 1000 + (index * 3600),
-                            pop: parseInt(hour.chanceofrain) / 100
+                        list: hourlyData.map(h => ({
+                            dt: h.dt,
+                            pop: h.precipitation / 100,
+                            main: {
+                                temp: h.temp,
+                                humidity: h.humidity
+                            },
+                            weather: h.weather,
+                            wind: {
+                                speed: h.windSpeed
+                            }
                         }))
                     }
                 };
@@ -5035,21 +5105,27 @@
             
             if (weatherData) {
                 const current = weatherData.current;
-                const todayForecast = weatherData.forecast.list.find(item => {
-                    const forecastDate = new Date(item.dt * 1000);
-                    const today = new Date();
-                    return forecastDate.getDate() === today.getDate();
-                });
+                const targetDate = weatherData.targetDate || '2025-07-19';
+                
+                // 対象日の全体的な降水確率を計算
+                let avgPrecipitation = 0;
+                if (weatherData.forecast && weatherData.forecast.list) {
+                    const precipitationValues = weatherData.forecast.list.map(item => item.pop);
+                    avgPrecipitation = precipitationValues.length > 0 ? 
+                        Math.round(precipitationValues.reduce((a, b) => a + b, 0) / precipitationValues.length * 100) : 0;
+                }
                 
                 const weatherIcon = getWeatherIcon(current.weather[0].icon);
-                const precipitation = todayForecast ? Math.round(todayForecast.pop * 100) : 0;
                 
                 // データソースの表示
                 const sourceIcon = weatherData.source === 'Open-Meteo' ? '🌐' : 
                                  weatherData.source === 'wttr.in' ? '📡' : '☁️';
                 
                 weatherSection.innerHTML = `
-                    <h3>🌤️ 天気情報</h3>
+                    <h3>🌤️ 天気予報</h3>
+                    <div class="weather-date" style="text-align: center; font-weight: 600; color: var(--primary-color); margin-bottom: 8px; font-size: 14px;">
+                        📅 ${targetDate} (土曜日)
+                    </div>
                     <div class="weather-current">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
                             <span style="font-size: 24px;">${weatherIcon}</span>
@@ -5062,8 +5138,13 @@
                             ${weatherData.location} | 湿度: ${current.main.humidity}%
                         </div>
                         <div style="font-size: 12px; margin-bottom: 8px;">
-                            💧 降水確率: ${precipitation}%
+                            💧 平均降水確率: ${avgPrecipitation}%
                         </div>
+                        ${weatherData.hourlyData ? `
+                            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                                ⏰ 各イベント時刻の詳細予報を表示中
+                            </div>
+                        ` : ''}
                         <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
                             ${sourceIcon} データ: ${weatherData.source} | 更新: ${new Date().toLocaleTimeString('ja-JP', {hour: '2-digit', minute: '2-digit'})}
                         </div>
@@ -5103,20 +5184,32 @@
                 const timelineCard = item.querySelector('.timeline-card');
                 const statusIndicator = item.querySelector('.status-indicator');
                 
+                // 時間要素から開始時刻を取得
+                const timeElement = item.querySelector('.time');
+                if (!timeElement) return;
+                
+                const timeText = timeElement.textContent.trim();
+                const eventTime = extractEventTime(timeText);
+                
+                // 該当時間の天気データを取得
+                const weatherForTime = getWeatherForTime(weatherData, eventTime);
+                if (!weatherForTime) return;
+                
                 // 天気情報要素を作成
                 const weatherInfo = document.createElement('div');
                 weatherInfo.className = 'weather-info';
                 
-                const current = weatherData.current;
-                const weatherIcon = getWeatherIcon(current.weather[0].icon);
-                const temp = Math.round(current.main.temp);
-                const desc = current.weather[0].description;
+                const weatherIcon = getWeatherIcon(weatherForTime.weather[0].icon);
+                const temp = Math.round(weatherForTime.main.temp);
+                const desc = weatherForTime.weather[0].description;
+                const precipitation = Math.round(weatherForTime.pop * 100);
                 
                 weatherInfo.innerHTML = `
                     <div class="weather-icon">${weatherIcon}</div>
                     <div class="weather-details">
                         <div class="weather-temp">${temp}°C</div>
                         <div class="weather-desc">${desc}</div>
+                        ${precipitation > 20 ? `<div class="weather-rain">💧${precipitation}%</div>` : ''}
                     </div>
                 `;
                 
@@ -5148,6 +5241,59 @@
                     timelineCard.appendChild(weatherInfo);
                 }
             });
+        }
+        
+        // 時間テキストからイベント時刻を抽出
+        function extractEventTime(timeText) {
+            // "06:55" または "06:55–08:45" のような形式から開始時刻を抽出
+            const timeMatch = timeText.match(/(\d{1,2}):(\d{2})/);
+            if (timeMatch) {
+                return {
+                    hour: parseInt(timeMatch[1]),
+                    minute: parseInt(timeMatch[2])
+                };
+            }
+            return null;
+        }
+        
+        // 指定時刻の天気データを取得
+        function getWeatherForTime(weatherData, eventTime) {
+            if (!weatherData.hourlyData || !eventTime) {
+                return weatherData.current; // フォールバック
+            }
+            
+            // 2025年7月19日の指定時刻のデータを探す
+            const targetDateTime = new Date(2025, 6, 19, eventTime.hour, eventTime.minute); // 月は0ベース
+            
+            // 最も近い時間のデータを探す
+            let closestData = null;
+            let minDiff = Infinity;
+            
+            weatherData.hourlyData.forEach(hourData => {
+                const hourDateTime = new Date(hourData.time);
+                const diff = Math.abs(hourDateTime.getTime() - targetDateTime.getTime());
+                
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestData = hourData;
+                }
+            });
+            
+            if (closestData) {
+                return {
+                    main: {
+                        temp: closestData.temp,
+                        humidity: closestData.humidity
+                    },
+                    weather: closestData.weather,
+                    wind: {
+                        speed: closestData.windSpeed
+                    },
+                    pop: closestData.precipitation / 100
+                };
+            }
+            
+            return weatherData.current; // フォールバック
         }
         
         // 屋外活動かどうかを判定
