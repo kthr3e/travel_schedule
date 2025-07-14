@@ -1397,6 +1397,9 @@
             // ゲーム状態読み込み
             loadGameState();
             
+            // ダークモード設定読み込み
+            setTimeout(loadDarkMode, 100);
+            
             // 写真ボタン追加
             addPhotoButtonsToTimeline();
             
@@ -1532,7 +1535,7 @@
         function initializePWA() {
             // Service Worker登録
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('./service-worker.js')
                     .then(registration => {
                         console.log('Service Worker登録成功:', registration);
                         swRegistration = registration;
@@ -2681,7 +2684,41 @@
             }
         }
         
-        // 重複削除：写真関連の機能はtakePhoto、showPhotoGallery関数で統合済み
+        // 写真ボタンをタイムラインに追加
+        function addPhotoButtonsToTimeline() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach((item, index) => {
+                // 既にボタンが追加されている場合はスキップ
+                if (item.querySelector('.photo-actions')) return;
+                
+                const timelineCard = item.querySelector('.timeline-card');
+                const location = item.dataset.location || '不明';
+                
+                // 写真ボタンを作成
+                const photoActions = document.createElement('div');
+                photoActions.className = 'photo-actions';
+                photoActions.style.cssText = `
+                    margin-top: 12px;
+                    display: flex;
+                    gap: 6px;
+                    justify-content: center;
+                `;
+                
+                photoActions.innerHTML = `
+                    <button onclick="takePhoto(${index}, '${location}')" 
+                            style="padding: 6px 12px; background: var(--secondary-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                        📷 写真撮影
+                    </button>
+                    <button onclick="showPhotoGallery(${index})" 
+                            style="padding: 6px 12px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                        🖼️ ギャラリー
+                    </button>
+                `;
+                
+                timelineCard.appendChild(photoActions);
+            });
+        }
         
         // 写真撮影
         function takePhoto(itemIndex, location) {
@@ -2986,8 +3023,8 @@
             };
         }
         
-        // ギャラリー表示
-        function showPhotoGallery() {
+        // ギャラリー表示（特定のタイムライン項目またはすべて）
+        function showPhotoGallery(itemIndex = null) {
             if (!db) {
                 showNotification('データベースが初期化されていません', 'warning');
                 return;
@@ -2998,13 +3035,19 @@
             const request = store.getAll();
             
             request.onsuccess = (event) => {
-                const photos = event.target.result;
-                displayGalleryModal(photos);
+                let photos = event.target.result;
+                
+                // 特定のタイムライン項目の写真をフィルタリング
+                if (itemIndex !== null && itemIndex !== undefined) {
+                    photos = photos.filter(photo => photo.itemIndex === itemIndex);
+                }
+                
+                displayGalleryModal(photos, itemIndex);
             };
         }
         
         // ギャラリーモーダル表示
-        function displayGalleryModal(photos) {
+        function displayGalleryModal(photos, itemIndex = null) {
             const modal = document.createElement('div');
             modal.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -3040,9 +3083,13 @@
                 </div>
             `).join('') : '<div style="text-align: center; color: var(--text-muted); padding: 40px;">まだ写真がありません</div>';
             
+            const titleText = itemIndex !== null ? 
+                `📷 ${document.querySelectorAll('.timeline-item')[itemIndex]?.dataset.location || '不明'} の写真 (${photos.length}枚)` : 
+                `📷 旅行ギャラリー (${photos.length}枚)`;
+            
             content.innerHTML = `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="margin: 0; color: var(--primary-color);">📷 旅行ギャラリー (${photos.length}枚)</h3>
+                    <h3 style="margin: 0; color: var(--primary-color);">${titleText}</h3>
                     <button onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
                 </div>
                 
@@ -4614,7 +4661,14 @@
                 weatherSection.id = 'weatherSection';
                 weatherSection.className = 'weather-section';
                 weatherSection.style.marginBottom = 'var(--spacing-md)';
-                controlPanel.appendChild(weatherSection);
+                
+                // コントロールパネルの適切な位置に挿入（費用計算の後）
+                const costSection = document.getElementById('costSection');
+                if (costSection && costSection.parentNode) {
+                    costSection.parentNode.insertBefore(weatherSection, costSection.nextSibling);
+                } else {
+                    controlPanel.appendChild(weatherSection);
+                }
             }
             
             if (weatherData) {
@@ -4719,7 +4773,14 @@
                 weatherSection = document.createElement('div');
                 weatherSection.id = 'weatherSection';
                 weatherSection.style.marginBottom = 'var(--spacing-md)';
-                controlPanel.appendChild(weatherSection);
+                
+                // コントロールパネルの適切な位置に挿入（費用計算の後）
+                const costSection = document.getElementById('costSection');
+                if (costSection && costSection.parentNode) {
+                    costSection.parentNode.insertBefore(weatherSection, costSection.nextSibling);
+                } else {
+                    controlPanel.appendChild(weatherSection);
+                }
             }
             
             weatherSection.innerHTML = `
@@ -5136,10 +5197,7 @@
             }
         }
 
-        // 初期化時にダークモード設定を読み込み
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(loadDarkMode, 100);
-        });
+        // 初期化時にダークモード設定を読み込み（メイン初期化関数に統合済み）
 
         // 共有機能
         function shareItinerary() {
