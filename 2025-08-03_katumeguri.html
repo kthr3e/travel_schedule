@@ -8,7 +8,16 @@
     <!-- 検索エンジン除外設定 -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="bingbot" content="noindex, nofoll        <header class="header" role="banner">
+            <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">
+                🌙 ダーク
+            </button>
+            <h1>武蔵小杉→向ヶ丘遊園 一日プラン</h1>
+            <p>川崎ブレイブサンダース抽選会＆岡本太郎美術館</p>
+            <div class="date-info">
+                <time datetime="2025-08-03">2025年8月3日（日曜日）</time>
+            </div>
+        </header>rchive, nosnippet, noimageindex">
     
     <style>
         /* CSS Variables for consistent theming and accessibility */
@@ -18,8 +27,8 @@
             --accent-color: #e74c3c;
             --success-color: #27ae60;
             --warning-color: #f39c12;
-            --background-color: #f8f9fa;
-            --card-background: #ffffff;
+            --background-color: #ffffff;
+            --card-background: #f8f9fa;
             --text-color: #2c3e50;
             --text-muted: #6c757d;
             --border-color: #dee2e6;
@@ -65,6 +74,77 @@
             color: white;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 天気予報 */
+        .weather-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .weather-item {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .weather-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .weather-time {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .weather-icon {
+            font-size: 1.5rem;
+            margin: 4px 0;
+        }
+
+        .weather-temp {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2px;
+        }
+
+        .weather-desc {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: var(--spacing-md);
         }
 
         .header h1 {
@@ -417,6 +497,22 @@
                 transform: none;
             }
         }
+
+        /* ダークモード用の変数 */
+        [data-theme="dark"] {
+            --background-color: #1a1a1a;
+            --card-background: #2d2d2d;
+            --text-color: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-muted: #888888;
+            --border-color: #404040;
+            --primary-color: #4a90e2;
+            --secondary-color: #7b68ee;
+            --accent-color: #ff6b6b;
+            --success-color: #51cf66;
+            --warning-color: #ffa94d;
+            --current-color: #ffd43b;
+        }
     </style>
 </head>
 <body>
@@ -448,6 +544,13 @@
                     <div class="label">移動回数</div>
                     <div class="value">2回</div>
                 </div>
+            </div>
+        </section>
+
+        <section class="summary" aria-labelledby="weather-heading">
+            <h2 id="weather-heading">🌤️ 当日の天気予報</h2>
+            <div id="weatherContainer" class="weather-container">
+                <div class="loading">天気情報を読み込み中...</div>
             </div>
         </section>
 
@@ -712,19 +815,111 @@
             console.log('オフライン状態');
         });
 
-        // ダークモード対応（システム設定に追従）
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
+        // ダークモード切り替え機能
+        const themeToggle = document.getElementById('themeToggle');
+        const documentElement = document.documentElement;
+        
+        // 保存されたテーマを取得、または初期設定をライトに
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        documentElement.setAttribute('data-theme', currentTheme);
+        updateToggleButton(currentTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleButton(newTheme);
+        });
+        
+        function updateToggleButton(theme) {
+            if (theme === 'dark') {
+                themeToggle.innerHTML = '☀️ ライト';
+                themeToggle.setAttribute('aria-label', 'ライトモードに切り替え');
+            } else {
+                themeToggle.innerHTML = '🌙 ダーク';
+                themeToggle.setAttribute('aria-label', 'ダークモードに切り替え');
+            }
         }
 
-        // ダークモード変更の監視
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (e.matches) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
+        // 天気予報API統合
+        async function fetchWeatherData() {
+            const weatherContainer = document.getElementById('weatherContainer');
+            
+            try {
+                // 武蔵小杉エリアの座標（緯度: 35.5776, 経度: 139.6566）
+                const lat = 35.5776;
+                const lon = 139.6566;
+                const date = '2025-08-03';
+                
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Tokyo&start_date=${date}&end_date=${date}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // 主要な時間帯の天気を表示（09:00, 12:00, 15:00）
+                const targetHours = [9, 12, 15];
+                const weatherHTML = targetHours.map(hour => {
+                    const index = data.hourly.time.findIndex(time => 
+                        new Date(time).getHours() === hour
+                    );
+                    
+                    if (index === -1) return '';
+                    
+                    const temp = Math.round(data.hourly.temperature_2m[index]);
+                    const humidity = data.hourly.relative_humidity_2m[index];
+                    const weatherCode = data.hourly.weather_code[index];
+                    const weatherInfo = getWeatherInfo(weatherCode);
+                    
+                    return `
+                        <div class="weather-item">
+                            <div class="weather-time">${hour.toString().padStart(2, '0')}:00</div>
+                            <div class="weather-icon">${weatherInfo.icon}</div>
+                            <div class="weather-temp">${temp}°C</div>
+                            <div class="weather-desc">${weatherInfo.description}</div>
+                        </div>
+                    `;
+                }).join('');
+                
+                weatherContainer.innerHTML = weatherHTML;
+                
+            } catch (error) {
+                console.error('天気データの取得に失敗:', error);
+                weatherContainer.innerHTML = `
+                    <div class="loading">
+                        天気情報の取得に失敗しました。<br>
+                        ネットワーク接続を確認してください。
+                    </div>
+                `;
             }
-        });
+        }
+        
+        // WMO天気コードから日本語の天気情報を取得
+        function getWeatherInfo(code) {
+            const weatherMap = {
+                0: { icon: '☀️', description: '快晴' },
+                1: { icon: '🌤️', description: 'ほぼ晴れ' },
+                2: { icon: '⛅', description: '一部曇り' },
+                3: { icon: '☁️', description: '曇り' },
+                45: { icon: '🌫️', description: '霧' },
+                48: { icon: '🌫️', description: '着氷霧' },
+                51: { icon: '🌦️', description: '小雨' },
+                53: { icon: '🌧️', description: '中雨' },
+                55: { icon: '🌧️', description: '大雨' },
+                61: { icon: '🌧️', description: '小雨' },
+                63: { icon: '🌧️', description: '中雨' },
+                65: { icon: '🌧️', description: '大雨' },
+                80: { icon: '🌦️', description: 'にわか雨' },
+                81: { icon: '🌧️', description: '激しいにわか雨' },
+                95: { icon: '⛈️', description: '雷雨' }
+            };
+            
+            return weatherMap[code] || { icon: '❓', description: '不明' };
+        }
+        
+        // ページ読み込み時に天気データを取得
+        document.addEventListener('DOMContentLoaded', fetchWeatherData);
     </script>
 
     <!-- CSS for dynamic states -->
