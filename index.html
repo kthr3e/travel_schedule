@@ -8,27 +8,26 @@
     <!-- 検索エンジン除外設定 -->
     <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
     <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-    <meta name="bingbot" content="noindex, nofoll        <header class="header" role="banner">
-            <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">
-                🌙 ダーク
-            </button>
-            <h1>武蔵小杉→向ヶ丘遊園 一日プラン</h1>
-            <p>川崎ブレイブサンダース抽選会＆岡本太郎美術館</p>
-            <div class="date-info">
-                <time datetime="2025-08-03">2025年8月3日（日曜日）</time>
-            </div>
-        </header>rchive, nosnippet, noimageindex">
+    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    
+    <!-- PWA Manifest（プライベート設定） -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Travel Schedule">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiMzNDk4ZGIiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiI+CjxwYXRoIGQ9Ik00OCAyNEMyNCAxMiAyNCAzNiA0OCA0OEw4NCA0OFY4NEw0OCA4NFY1MkwxMiA1MkMxMiA2MCAyNCA2MCA0OCA2MFY4NEgxMlY5NkgxMzJWODRIOTZWNjBIMTMyVjQ4SDk2VjI0SDQ4WiIgZmlsbD0iI2ZmZmZmZiIvPgo8L3N2Zz4KPC9zdmc+">
     
     <style>
-        /* CSS Variables for consistent theming and accessibility */
+        /* CSS Variables for consistent theming */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
             --success-color: #27ae60;
             --warning-color: #f39c12;
-            --background-color: #ffffff;
-            --card-background: #f8f9fa;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
             --text-color: #2c3e50;
             --text-muted: #6c757d;
             --border-color: #dee2e6;
@@ -41,7 +40,6 @@
             --font-size-md: 1rem;
             --font-size-lg: 1.125rem;
             --font-size-xl: 1.5rem;
-            --font-size-xxl: 2rem;
         }
 
         /* Reset and base styles */
@@ -77,78 +75,8 @@
             position: relative;
         }
 
-        .theme-toggle {
-            position: absolute;
-            top: var(--spacing-md);
-            right: var(--spacing-md);
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: var(--font-size-sm);
-            transition: all 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* 天気予報 */
-        .weather-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-md);
-        }
-
-        .weather-item {
-            background: var(--background-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-sm);
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .weather-item:hover {
-            transform: translateY(-2px);
-        }
-
-        .weather-time {
-            font-size: var(--font-size-sm);
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .weather-icon {
-            font-size: 1.5rem;
-            margin: 4px 0;
-        }
-
-        .weather-temp {
-            font-size: var(--font-size-lg);
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 2px;
-        }
-
-        .weather-desc {
-            font-size: var(--font-size-xs);
-            color: var(--text-muted);
-        }
-
-        .loading {
-            text-align: center;
-            color: var(--text-secondary);
-            font-style: italic;
-            padding: var(--spacing-md);
-        }
-
         .header h1 {
-            font-size: var(--font-size-xxl);
+            font-size: var(--font-size-xl);
             margin-bottom: var(--spacing-sm);
             font-weight: 700;
         }
@@ -168,13 +96,88 @@
             font-weight: 600;
         }
 
+        /* 天気予報セクション */
+        .weather-section {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .weather-section h2 {
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+            font-size: var(--font-size-lg);
+        }
+
+        .weather-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+
+        .weather-item {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm);
+            text-align: center;
+            transition: transform 0.2s ease;
+        }
+
+        .weather-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .weather-time {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .weather-icon {
+            font-size: 1.5rem;
+            margin: 4px 0;
+        }
+
+        .weather-temp {
+            font-size: var(--font-size-lg);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 2px;
+        }
+
+        .weather-desc {
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
+        }
+
+        .weather-loading {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: var(--spacing-md);
+        }
+
+        .weather-error {
+            text-align: center;
+            color: var(--accent-color);
+            padding: var(--spacing-md);
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: var(--border-radius);
+        }
+
         /* Timeline container */
         .timeline {
             position: relative;
             max-width: 100%;
         }
 
-        /* Timeline line - PC only */
+        /* Timeline line */
         .timeline::before {
             content: '';
             position: absolute;
@@ -193,7 +196,7 @@
             padding-left: 5rem;
         }
 
-        /* Timeline marker - PC only */
+        /* Timeline marker */
         .timeline-item::before {
             content: '';
             position: absolute;
@@ -363,7 +366,7 @@
         .summary h2 {
             color: var(--primary-color);
             margin-bottom: var(--spacing-sm);
-            font-size: var(--font-size-xl);
+            font-size: var(--font-size-lg);
         }
 
         .summary-grid {
@@ -392,7 +395,34 @@
             color: var(--primary-color);
         }
 
-        /* Responsive design for mobile */
+        /* イベント別天気表示 */
+        .event-weather {
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm);
+            margin-top: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .event-weather .weather-icon {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .event-weather .weather-info {
+            flex: 1;
+            font-size: var(--font-size-sm);
+        }
+
+        .event-weather .weather-temp {
+            font-size: var(--font-size-md);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
             .container {
                 padding: var(--spacing-md);
@@ -403,7 +433,7 @@
             }
 
             .header h1 {
-                font-size: var(--font-size-xl);
+                font-size: var(--font-size-lg);
             }
 
             /* Remove timeline line and markers on mobile */
@@ -420,14 +450,6 @@
                 display: none;
             }
 
-            /* Mobile-friendly time display */
-            .time-range,
-            .time-single {
-                display: block;
-                text-align: center;
-                margin-bottom: var(--spacing-sm);
-            }
-
             .activity {
                 font-size: var(--font-size-md);
             }
@@ -436,7 +458,6 @@
                 font-size: var(--font-size-sm);
             }
 
-            /* Stack links vertically on mobile */
             .link {
                 display: block;
                 margin: 4px 0;
@@ -445,6 +466,10 @@
 
             .summary-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .weather-container {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
         }
 
@@ -476,48 +501,11 @@
             outline: 2px solid var(--secondary-color);
             outline-offset: 2px;
         }
-
-        /* High contrast mode support */
-        @media (prefers-contrast: high) {
-            :root {
-                --background-color: #ffffff;
-                --card-background: #f8f9fa;
-                --text-color: #000000;
-                --border-color: #000000;
-            }
-        }
-
-        /* Reduced motion support */
-        @media (prefers-reduced-motion: reduce) {
-            .timeline-card {
-                transition: none;
-            }
-            
-            .timeline-card:hover {
-                transform: none;
-            }
-        }
-
-        /* ダークモード用の変数 */
-        [data-theme="dark"] {
-            --background-color: #1a1a1a;
-            --card-background: #2d2d2d;
-            --text-color: #e0e0e0;
-            --text-secondary: #b0b0b0;
-            --text-muted: #888888;
-            --border-color: #404040;
-            --primary-color: #4a90e2;
-            --secondary-color: #7b68ee;
-            --accent-color: #ff6b6b;
-            --success-color: #51cf66;
-            --warning-color: #ffa94d;
-            --current-color: #ffd43b;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
+        <header class="header" role="banner">
             <h1>武蔵小杉→向ヶ丘遊園 一日プラン</h1>
             <p>川崎ブレイブサンダース抽選会＆岡本太郎美術館</p>
             <div class="date-info">
@@ -547,10 +535,10 @@
             </div>
         </section>
 
-        <section class="summary" aria-labelledby="weather-heading">
+        <section class="weather-section" aria-labelledby="weather-heading">
             <h2 id="weather-heading">🌤️ 当日の天気予報</h2>
             <div id="weatherContainer" class="weather-container">
-                <div class="loading">天気情報を読み込み中...</div>
+                <div class="weather-loading">天気情報を読み込み中...</div>
             </div>
         </section>
 
@@ -568,13 +556,14 @@
                     <div class="notes">
                         <strong>☀️ 注意事項:</strong> 直射日光を避け館内へ。
                     </div>
+                    <div id="weather-09:40" class="event-weather"></div>
                 </div>
             </article>
 
             <!-- イベント1 -->
             <article class="timeline-item event" aria-labelledby="event1-heading">
                 <div class="timeline-card">
-                    <time class="time" datetime="10:00/11:00">
+                    <time class="time" datetime="10:00">
                         <span class="time-range">10:00–11:00</span>
                         <span class="duration">1時間</span>
                     </time>
@@ -596,6 +585,7 @@
                             🏢 グランツリー イベント情報
                         </a>
                     </div>
+                    <div id="weather-10:00" class="event-weather"></div>
                 </div>
             </article>
 
@@ -621,13 +611,14 @@
                             🍣 回し寿司 活 店舗情報
                         </a>
                     </div>
+                    <div id="weather-11:10" class="event-weather"></div>
                 </div>
             </article>
 
             <!-- 昼食 -->
             <article class="timeline-item food" aria-labelledby="lunch-heading">
                 <div class="timeline-card">
-                    <time class="time" datetime="12:00/13:00">
+                    <time class="time" datetime="12:00">
                         <span class="time-range">12:00–13:00</span>
                         <span class="duration">1時間</span>
                     </time>
@@ -640,6 +631,7 @@
                     <div class="notes">
                         <strong>🍱 メニュー:</strong> 握りは1皿から注文可、デザートも充実。
                     </div>
+                    <div id="weather-12:00" class="event-weather"></div>
                 </div>
             </article>
 
@@ -659,13 +651,14 @@
                     <div class="notes">
                         <strong>🗺️ ルート:</strong> 武蔵小杉→（南武線）→登戸→（小田急）→向ヶ丘遊園
                     </div>
+                    <div id="weather-13:15" class="event-weather"></div>
                 </div>
             </article>
 
             <!-- イベント2 -->
             <article class="timeline-item event" aria-labelledby="event2-heading">
                 <div class="timeline-card">
-                    <time class="time" datetime="14:00/15:30">
+                    <time class="time" datetime="14:00">
                         <span class="time-range">14:00–15:30</span>
                         <span class="duration">1.5時間</span>
                     </time>
@@ -687,163 +680,14 @@
                             🏛️ 岡本太郎美術館 利用案内
                         </a>
                     </div>
+                    <div id="weather-14:00" class="event-weather"></div>
                 </div>
             </article>
         </main>
     </div>
 
     <script>
-        // アクセシビリティとユーザビリティの向上
-        document.addEventListener('DOMContentLoaded', function() {
-            // 外部リンクに安全性とアクセシビリティの属性を追加
-            const externalLinks = document.querySelectorAll('a[href^="http"]');
-            externalLinks.forEach(link => {
-                // セキュリティ属性
-                link.setAttribute('rel', 'noopener noreferrer');
-                
-                // アクセシビリティ - 外部リンクであることを明示
-                const currentAriaLabel = link.getAttribute('aria-label') || link.textContent;
-                link.setAttribute('aria-label', currentAriaLabel + '（外部サイト）');
-                
-                // 確認ダイアログ（オプション）
-                link.addEventListener('click', function(e) {
-                    if (!confirm('外部サイト「' + this.textContent.trim() + '」を開きますか？')) {
-                        e.preventDefault();
-                    }
-                });
-            });
-
-            // キーボードナビゲーション支援
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Tab') {
-                    document.body.classList.add('keyboard-navigation');
-                }
-            });
-
-            document.addEventListener('mousedown', function() {
-                document.body.classList.remove('keyboard-navigation');
-            });
-
-            // スムーズスクロール実装
-            const timelineItems = document.querySelectorAll('.timeline-item');
-            timelineItems.forEach((item, index) => {
-                item.style.setProperty('--item-index', index);
-                
-                // フォーカス可能にする
-                item.setAttribute('tabindex', '0');
-                
-                // フォーカス時のスクロール調整
-                item.addEventListener('focus', function() {
-                    this.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                });
-            });
-
-            // 現在時刻の表示と経過時刻の強調表示
-            updateCurrentTime();
-            setInterval(updateCurrentTime, 60000); // 1分ごとに更新
-
-            // パフォーマンス向上: 画像の遅延読み込み（今回は画像なしだが拡張性のため）
-            if ('IntersectionObserver' in window) {
-                const imageObserver = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            img.src = img.dataset.src;
-                            img.classList.remove('lazy');
-                            imageObserver.unobserve(img);
-                        }
-                    });
-                });
-
-                const lazyImages = document.querySelectorAll('img[data-src]');
-                lazyImages.forEach(img => imageObserver.observe(img));
-            }
-        });
-
-        // 現在時刻に基づく進行状況の表示
-        function updateCurrentTime() {
-            const now = new Date();
-            const currentTime = now.getHours() * 60 + now.getMinutes();
-            const timelineItems = document.querySelectorAll('.timeline-item');
-
-            timelineItems.forEach(item => {
-                const timeElement = item.querySelector('.time');
-                const timeAttr = timeElement.getAttribute('datetime');
-                
-                if (timeAttr) {
-                    let itemTime;
-                    if (timeAttr.includes('/')) {
-                        // 時間範囲の場合は開始時刻を使用
-                        itemTime = parseTimeString(timeAttr.split('/')[0]);
-                    } else {
-                        itemTime = parseTimeString(timeAttr);
-                    }
-
-                    // 現在時刻と比較して状態を更新
-                    if (currentTime >= itemTime) {
-                        item.classList.add('completed');
-                        item.setAttribute('aria-label', '完了済み: ' + item.querySelector('.activity').textContent);
-                    } else if (currentTime >= itemTime - 30) { // 30分前から「まもなく」
-                        item.classList.add('upcoming');
-                        item.setAttribute('aria-label', 'まもなく: ' + item.querySelector('.activity').textContent);
-                    }
-                }
-            });
-        }
-
-        // 時刻文字列を分に変換
-        function parseTimeString(timeStr) {
-            const [hours, minutes] = timeStr.split(':').map(num => parseInt(num));
-            return hours * 60 + minutes;
-        }
-
-        // PWA対応の基本設定（Service Workerなしの軽量版）
-        if ('serviceWorker' in navigator) {
-            // 必要に応じてService Workerを登録
-            console.log('Service Worker対応ブラウザ');
-        }
-
-        // オフライン対応の状態表示
-        window.addEventListener('online', function() {
-            console.log('オンライン状態に復帰');
-        });
-
-        window.addEventListener('offline', function() {
-            console.log('オフライン状態');
-        });
-
-        // ダークモード切り替え機能
-        const themeToggle = document.getElementById('themeToggle');
-        const documentElement = document.documentElement;
-        
-        // 保存されたテーマを取得、または初期設定をライトに
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        documentElement.setAttribute('data-theme', currentTheme);
-        updateToggleButton(currentTheme);
-        
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateToggleButton(newTheme);
-        });
-        
-        function updateToggleButton(theme) {
-            if (theme === 'dark') {
-                themeToggle.innerHTML = '☀️ ライト';
-                themeToggle.setAttribute('aria-label', 'ライトモードに切り替え');
-            } else {
-                themeToggle.innerHTML = '🌙 ダーク';
-                themeToggle.setAttribute('aria-label', 'ダークモードに切り替え');
-            }
-        }
-
-        // 天気予報API統合
+        // 天気予報API統合（イベント別対応）
         async function fetchWeatherData() {
             const weatherContainer = document.getElementById('weatherContainer');
             
@@ -853,46 +697,120 @@
                 const lon = 139.6566;
                 const date = '2025-08-03';
                 
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,weather_code&timezone=Asia/Tokyo&start_date=${date}&end_date=${date}`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,relative_humidity_2m,weather_code,precipitation_probability&timezone=Asia/Tokyo&start_date=${date}&end_date=${date}`;
                 
                 const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP Error: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 
-                // 主要な時間帯の天気を表示（09:00, 12:00, 15:00）
-                const targetHours = [9, 12, 15];
-                const weatherHTML = targetHours.map(hour => {
-                    const index = data.hourly.time.findIndex(time => 
-                        new Date(time).getHours() === hour
-                    );
-                    
-                    if (index === -1) return '';
-                    
-                    const temp = Math.round(data.hourly.temperature_2m[index]);
-                    const humidity = data.hourly.relative_humidity_2m[index];
-                    const weatherCode = data.hourly.weather_code[index];
-                    const weatherInfo = getWeatherInfo(weatherCode);
-                    
-                    return `
-                        <div class="weather-item">
-                            <div class="weather-time">${hour.toString().padStart(2, '0')}:00</div>
-                            <div class="weather-icon">${weatherInfo.icon}</div>
-                            <div class="weather-temp">${temp}°C</div>
-                            <div class="weather-desc">${weatherInfo.description}</div>
-                        </div>
-                    `;
-                }).join('');
+                // 全体的な天気概要を表示
+                displayOverallWeather(data, weatherContainer);
                 
-                weatherContainer.innerHTML = weatherHTML;
+                // 各イベントごとの天気を表示
+                displayEventWeather(data);
                 
             } catch (error) {
                 console.error('天気データの取得に失敗:', error);
                 weatherContainer.innerHTML = `
-                    <div class="loading">
-                        天気情報の取得に失敗しました。<br>
-                        ネットワーク接続を確認してください。
+                    <div class="weather-error">
+                        ⚠️ 天気情報の取得に失敗しました<br>
+                        <small>ネットワーク接続をご確認ください</small>
                     </div>
                 `;
+                
+                // エラー時でも各イベントの天気欄に代替メッセージを表示
+                displayFallbackEventWeather();
             }
+        }
+        
+        // 全体的な天気概要を表示
+        function displayOverallWeather(data, container) {
+            // 主要な時間帯の天気を表示（09:00, 12:00, 15:00）
+            const targetHours = [9, 12, 15];
+            const weatherHTML = targetHours.map(hour => {
+                const weatherInfo = getWeatherForHour(data, hour);
+                if (!weatherInfo) return '';
+                
+                return `
+                    <div class="weather-item">
+                        <div class="weather-time">${hour.toString().padStart(2, '0')}:00</div>
+                        <div class="weather-icon">${weatherInfo.icon}</div>
+                        <div class="weather-temp">${weatherInfo.temp}°C</div>
+                        <div class="weather-desc">${weatherInfo.description}</div>
+                    </div>
+                `;
+            }).filter(html => html).join('');
+            
+            container.innerHTML = weatherHTML || `
+                <div class="weather-error">天気データが取得できませんでした</div>
+            `;
+        }
+        
+        // 各イベントごとの天気を表示
+        function displayEventWeather(data) {
+            const eventTimes = ['09:40', '10:00', '11:10', '12:00', '13:15', '14:00'];
+            
+            eventTimes.forEach(timeStr => {
+                const hour = parseInt(timeStr.split(':')[0]);
+                const minute = parseInt(timeStr.split(':')[1]);
+                const weatherInfo = getWeatherForHour(data, hour);
+                const weatherElement = document.getElementById(`weather-${timeStr}`);
+                
+                if (weatherElement && weatherInfo) {
+                    weatherElement.innerHTML = `
+                        <div class="weather-icon">${weatherInfo.icon}</div>
+                        <div class="weather-info">
+                            <div class="weather-temp">${weatherInfo.temp}°C</div>
+                            <div>${weatherInfo.description}</div>
+                            ${weatherInfo.rain > 0 ? `<div>☔ 降水確率: ${weatherInfo.rain}%</div>` : ''}
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        // エラー時の代替天気表示
+        function displayFallbackEventWeather() {
+            const eventTimes = ['09:40', '10:00', '11:10', '12:00', '13:15', '14:00'];
+            
+            eventTimes.forEach(timeStr => {
+                const weatherElement = document.getElementById(`weather-${timeStr}`);
+                if (weatherElement) {
+                    weatherElement.innerHTML = `
+                        <div class="weather-icon">🌤️</div>
+                        <div class="weather-info">
+                            <div>天気情報を確認できませんでした</div>
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        // 指定時間の天気データを取得
+        function getWeatherForHour(data, targetHour) {
+            if (!data.hourly || !data.hourly.time) return null;
+            
+            const index = data.hourly.time.findIndex(time => {
+                const hourDate = new Date(time);
+                return hourDate.getHours() === targetHour;
+            });
+            
+            if (index === -1) return null;
+            
+            const temp = Math.round(data.hourly.temperature_2m[index]);
+            const weatherCode = data.hourly.weather_code[index];
+            const rain = data.hourly.precipitation_probability[index] || 0;
+            const weatherInfo = getWeatherInfo(weatherCode);
+            
+            return {
+                temp: temp,
+                icon: weatherInfo.icon,
+                description: weatherInfo.description,
+                rain: rain
+            };
         }
         
         // WMO天気コードから日本語の天気情報を取得
@@ -918,77 +836,62 @@
             return weatherMap[code] || { icon: '❓', description: '不明' };
         }
         
-        // ページ読み込み時に天気データを取得
-        document.addEventListener('DOMContentLoaded', fetchWeatherData);
-    </script>
+        // アクセシビリティとユーザビリティの向上
+        document.addEventListener('DOMContentLoaded', function() {
+            // 天気データの取得
+            fetchWeatherData();
+            
+            // 外部リンクに安全性とアクセシビリティの属性を追加
+            const externalLinks = document.querySelectorAll('a[href^="http"]');
+            externalLinks.forEach(link => {
+                // セキュリティ属性
+                link.setAttribute('rel', 'noopener noreferrer');
+                
+                // アクセシビリティ - 外部リンクであることを明示
+                const currentAriaLabel = link.getAttribute('aria-label') || link.textContent;
+                link.setAttribute('aria-label', currentAriaLabel + '（外部サイト）');
+            });
 
-    <!-- CSS for dynamic states -->
-    <style>
-        /* 動的状態のスタイル */
-        .timeline-item.completed .timeline-card {
-            opacity: 0.7;
-            background: #f8f9fa;
-            border-left: 4px solid var(--success-color);
-        }
-
-        .timeline-item.upcoming .timeline-card {
-            border-left: 4px solid var(--warning-color);
-            box-shadow: 0 4px 20px rgba(243, 156, 18, 0.2);
-        }
-
-        .keyboard-navigation *:focus {
-            outline: 2px solid var(--accent-color) !important;
-            outline-offset: 2px !important;
-        }
-
-        /* ダークモード対応 */
-        .dark-mode {
-            --background-color: #1a1a1a;
-            --card-background: #2d2d2d;
-            --text-color: #ffffff;
-            --text-muted: #b0b0b0;
-            --border-color: #444444;
-        }
-
-        .dark-mode body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-
-        .dark-mode .timeline-card {
-            background: var(--card-background);
-            color: var(--text-color);
-        }
-
-        .dark-mode .summary {
-            background: var(--card-background);
-        }
-
-        .dark-mode .summary-item {
-            background: var(--background-color);
-        }
-
-        .dark-mode .notes {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-        }
-
-        /* アニメーション（motion許可時のみ） */
-        @media (prefers-reduced-motion: no-preference) {
-            .timeline-item {
-                opacity: 0;
-                transform: translateY(20px);
-                animation: fadeInUp 0.6s ease forwards;
-                animation-delay: calc(var(--item-index) * 0.1s);
-            }
-
-            @keyframes fadeInUp {
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
+            // キーボードナビゲーション支援
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    document.body.classList.add('keyboard-navigation');
                 }
+            });
+
+            document.addEventListener('mousedown', function() {
+                document.body.classList.remove('keyboard-navigation');
+            });
+
+            // スムーズスクロール実装
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                item.setAttribute('tabindex', '0');
+                
+                // フォーカス時のスクロール調整
+                item.addEventListener('focus', function() {
+                    this.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                });
+            });
+
+            // PWA対応の基本設定
+            if ('serviceWorker' in navigator) {
+                console.log('Service Worker対応ブラウザ');
             }
-        }
-    </style>
+
+            // オフライン対応の状態表示
+            window.addEventListener('online', function() {
+                console.log('オンライン状態に復帰');
+                fetchWeatherData(); // オンライン復帰時に天気データを再取得
+            });
+
+            window.addEventListener('offline', function() {
+                console.log('オフライン状態');
+            });
+        });
+    </script>
 </body>
 </html>
