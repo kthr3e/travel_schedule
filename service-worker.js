@@ -145,42 +145,52 @@ function isApiRequest(request) {
 async function handleApiRequest(request) {
   const url = new URL(request.url);
   const cacheKey = `api-${url.pathname}${url.search}`;
-  
-  try {
-    // ネットワークファーストで試行
+  const { ttl, strategy } = getApiConfig(url);
+  const cache = await caches.open(CACHE_NAME);
+
+  const fetchAndCache = async () => {
     const networkResponse = await fetch(request);
-    
     if (networkResponse.ok) {
-      // 成功時はキャッシュに保存
-      const cache = await caches.open(CACHE_NAME);
       const responseToCache = networkResponse.clone();
-      
-      // TTL情報を追加
       const now = Date.now();
-      const ttl = getApiTtl(url);
       responseToCache.headers.set('sw-cached-at', now.toString());
       responseToCache.headers.set('sw-ttl', ttl.toString());
-      
       await cache.put(cacheKey, responseToCache);
-      return networkResponse;
     }
-  } catch (error) {
-    console.log('[SW] API ネットワークエラー、キャッシュを確認:', error);
-  }
-  
-  // ネットワーク失敗時はキャッシュから取得
-  const cachedResponse = await caches.match(cacheKey);
-  if (cachedResponse) {
-    const cachedAt = parseInt(cachedResponse.headers.get('sw-cached-at') || '0');
-    const ttl = parseInt(cachedResponse.headers.get('sw-ttl') || '0');
-    
-    if (Date.now() - cachedAt < ttl) {
-      console.log('[SW] 有効なAPIキャッシュを返却');
+    return networkResponse;
+  };
+
+  const cachedResponse = await cache.match(cacheKey);
+  const cachedAt = cachedResponse ? parseInt(cachedResponse.headers.get('sw-cached-at') || '0') : 0;
+  const isCacheValid = cachedResponse && (Date.now() - cachedAt < ttl);
+
+  if (strategy === 'cache-first-with-refresh') {
+    if (isCacheValid) {
+      fetchAndCache().catch(() => {});
       return cachedResponse;
     }
+    try {
+      return await fetchAndCache();
+    } catch (error) {
+      if (cachedResponse) return cachedResponse;
+    }
+  } else if (strategy === 'cache-first') {
+    if (isCacheValid) {
+      return cachedResponse;
+    }
+    try {
+      return await fetchAndCache();
+    } catch (error) {
+      if (isCacheValid) return cachedResponse;
+    }
+  } else { // network-first
+    try {
+      return await fetchAndCache();
+    } catch (error) {
+      if (isCacheValid) return cachedResponse;
+    }
   }
-  
-  // フォールバック：エラーレスポンス
+
   return new Response(
     JSON.stringify({
       error: 'オフライン状態です',
@@ -194,18 +204,18 @@ async function handleApiRequest(request) {
   );
 }
 
-// API TTL設定の取得
-function getApiTtl(url) {
+// API 設定の取得
+function getApiConfig(url) {
   if (url.hostname.includes('weather') || url.pathname.includes('weather')) {
-    return API_CACHE_CONFIG.weather.ttl;
+    return API_CACHE_CONFIG.weather;
   }
   if (url.pathname.includes('event')) {
-    return API_CACHE_CONFIG.events.ttl;
+    return API_CACHE_CONFIG.events;
   }
   if (url.pathname.includes('traffic')) {
-    return API_CACHE_CONFIG.traffic.ttl;
+    return API_CACHE_CONFIG.traffic;
   }
-  return 5 * 60 * 1000; // デフォルト5分
+  return { ttl: 5 * 60 * 1000, strategy: 'network-first' };
 }
 
 // オフライン時のページ生成
