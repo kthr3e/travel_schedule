@@ -1007,7 +1007,23 @@
 
             // PWA対応の基本設定
             if ('serviceWorker' in navigator) {
-                console.log('Service Worker対応ブラウザ');
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker登録成功:', registration.scope);
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('新しいService Workerがインストールされました。ページを更新してください。');
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Service Worker登録失敗:', error);
+                    });
             }
 
             // オフライン対応の状態表示
