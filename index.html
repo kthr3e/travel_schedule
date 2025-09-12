@@ -880,11 +880,13 @@
         // 各イベントごとの天気を表示
         function displayEventWeather(data) {
             const eventTimes = ['12:30', '13:30', '15:00', '16:30', '17:20', '19:30', '20:20'];
-            
+
             eventTimes.forEach(timeStr => {
                 const hour = parseInt(timeStr.split(':')[0]);
                 const minute = parseInt(timeStr.split(':')[1]);
-                const weatherInfo = getWeatherForHour(data, hour);
+                // 30分以上の場合は次の時間帯に切り上げ
+                const roundedHour = (minute >= 30 ? hour + 1 : hour) % 24;
+                const weatherInfo = getWeatherForHour(data, roundedHour);
                 const weatherElement = document.getElementById(`weather-${timeStr}`);
                 
                 if (weatherElement && weatherInfo) {
@@ -920,10 +922,12 @@
         // 指定時間の天気データを取得
         function getWeatherForHour(data, targetHour) {
             if (!data.hourly || !data.hourly.time) return null;
-            
+
+            // 時間を0-23の範囲に正規化
+            const normalizedHour = ((targetHour % 24) + 24) % 24;
             const index = data.hourly.time.findIndex(time => {
                 const hourDate = new Date(time);
-                return hourDate.getHours() === targetHour;
+                return hourDate.getHours() === normalizedHour;
             });
             
             if (index === -1) return null;
