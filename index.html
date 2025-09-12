@@ -816,6 +816,8 @@
 
     <script>
         // 天気予報API統合（イベント別対応）
+        const EVENT_TIMES = ['12:30', '13:30', '15:00', '16:30', '17:20', '19:30', '20:20'];
+
         async function fetchWeatherData() {
             const weatherContainer = document.getElementById('weatherContainer');
             
@@ -879,9 +881,7 @@
         
         // 各イベントごとの天気を表示
         function displayEventWeather(data) {
-            const eventTimes = ['12:30', '13:30', '15:00', '16:30', '17:20', '19:30', '20:20'];
-            
-            eventTimes.forEach(timeStr => {
+            EVENT_TIMES.forEach(timeStr => {
                 const hour = parseInt(timeStr.split(':')[0]);
                 const minute = parseInt(timeStr.split(':')[1]);
                 const weatherInfo = getWeatherForHour(data, hour);
@@ -902,9 +902,7 @@
         
         // エラー時の代替天気表示
         function displayFallbackEventWeather() {
-            const eventTimes = ['12:30', '13:30', '15:00', '16:30', '17:20', '19:30', '20:20'];
-            
-            eventTimes.forEach(timeStr => {
+            EVENT_TIMES.forEach(timeStr => {
                 const weatherElement = document.getElementById(`weather-${timeStr}`);
                 if (weatherElement) {
                     weatherElement.innerHTML = `
