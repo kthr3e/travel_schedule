@@ -149,18 +149,28 @@ async function handleApiRequest(request) {
   try {
     // ネットワークファーストで試行
     const networkResponse = await fetch(request);
-    
+
     if (networkResponse.ok) {
       // 成功時はキャッシュに保存
       const cache = await caches.open(CACHE_NAME);
-      const responseToCache = networkResponse.clone();
-      
+
+      // cloneしたレスポンスからボディを取得し、ヘッダーを追加して新しいResponseを生成
+      const responseClone = networkResponse.clone();
+      const body = await responseClone.arrayBuffer();
+      const headers = new Headers(responseClone.headers);
+
       // TTL情報を追加
       const now = Date.now();
       const ttl = getApiTtl(url);
-      responseToCache.headers.set('sw-cached-at', now.toString());
-      responseToCache.headers.set('sw-ttl', ttl.toString());
-      
+      headers.set('sw-cached-at', now.toString());
+      headers.set('sw-ttl', ttl.toString());
+
+      const responseToCache = new Response(body, {
+        status: responseClone.status,
+        statusText: responseClone.statusText,
+        headers
+      });
+
       await cache.put(cacheKey, responseToCache);
       return networkResponse;
     }
